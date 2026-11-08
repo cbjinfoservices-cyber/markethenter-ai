@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Supplier } from '@/pages/suppliers/supplierStore';
+import { emptySupplierLogistics } from '@/pages/suppliers/supplierStore';
 
 type ScenarioOption = { id: number; name: string };
 
@@ -27,6 +28,14 @@ export default function SupplierDialog({ supplier, scenarios, onCancel, onSave }
     supplier.unitPrice > 0 ? String(supplier.unitPrice) : '',
   );
   const [note, setNote] = useState(supplier.note);
+  const initialLogistics = supplier.logistics ?? emptySupplierLogistics();
+  const [packaging, setPackaging] = useState(initialLogistics.packaging);
+  const [unitsPerPackage, setUnitsPerPackage] = useState(initialLogistics.unitsPerPackage?.toString() ?? '');
+  const [packagingPerUnit, setPackagingPerUnit] = useState(initialLogistics.packagingPerUnit?.toString() ?? '');
+  const [shippingMethod, setShippingMethod] = useState(initialLogistics.shippingMethod);
+  const [shippingPerUnit, setShippingPerUnit] = useState(initialLogistics.shippingPerUnit?.toString() ?? '');
+  const [incoterm, setIncoterm] = useState(initialLogistics.incoterm);
+  const [customsPercent, setCustomsPercent] = useState(initialLogistics.customsPercent?.toString() ?? '');
   const [linked, setLinked] = useState<number[]>(supplier.scenarioIds);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +49,13 @@ export default function SupplierDialog({ supplier, scenarios, onCancel, onSave }
   const priceId = useId();
   const noteId = useId();
   const titleId = useId();
+  const packagingId = useId();
+  const unitsId = useId();
+  const packagingCostId = useId();
+  const shippingMethodId = useId();
+  const shippingCostId = useId();
+  const incotermId = useId();
+  const customsId = useId();
 
   useEffect(() => {
     firstField.current?.focus();
@@ -68,6 +84,7 @@ export default function SupplierDialog({ supplier, scenarios, onCancel, onSave }
       const parsed = Number(value.replace(',', '.'));
       return Number.isFinite(parsed) && parsed > 0 ? Math.round(parsed * 100) / 100 : 0;
     };
+    const optionalNumber = (value: string) => value === '' ? null : Number(value);
     onSave({
       ...supplier,
       name: cleanName.slice(0, 48),
@@ -76,6 +93,15 @@ export default function SupplierDialog({ supplier, scenarios, onCancel, onSave }
       leadDays: number(leadDays),
       moq: number(moq),
       unitPrice: number(unitPrice),
+      logistics: {
+        packaging: packaging.trim().slice(0, 120),
+        unitsPerPackage: optionalNumber(unitsPerPackage),
+        packagingPerUnit: optionalNumber(packagingPerUnit),
+        shippingMethod: shippingMethod.trim().slice(0, 80),
+        shippingPerUnit: optionalNumber(shippingPerUnit),
+        incoterm: incoterm.trim().slice(0, 32),
+        customsPercent: optionalNumber(customsPercent),
+      },
       note: note.trim().slice(0, 240),
       scenarioIds: linked,
     });
@@ -197,6 +223,46 @@ export default function SupplierDialog({ supplier, scenarios, onCancel, onSave }
               placeholder="4.50"
               onChange={(event) => setUnitPrice(event.target.value)}
             />
+          </div>
+
+          <div className="sup-field is-wide">
+            <span className="sup-field-lab">{t('home.suppliers.logisticsTitle')}</span>
+            <p className="sup-field-note">{t('home.suppliers.logisticsHint')}</p>
+          </div>
+          <div className="sup-field is-wide">
+            <label htmlFor={packagingId}>{t('home.suppliers.packagingDescription')}</label>
+            <input id={packagingId} className="sup-input" type="text" maxLength={120}
+              value={packaging} onChange={(event) => setPackaging(event.target.value)} />
+          </div>
+          <div className="sup-field">
+            <label htmlFor={unitsId}>{t('home.suppliers.unitsPerPackage')}</label>
+            <input id={unitsId} className="sup-input" type="number" min={1} max={1000000} step={1}
+              value={unitsPerPackage} onChange={(event) => setUnitsPerPackage(event.target.value)} />
+          </div>
+          <div className="sup-field">
+            <label htmlFor={packagingCostId}>{t('home.suppliers.packagingPerUnit')}</label>
+            <input id={packagingCostId} className="sup-input" type="number" min={0} max={100000} step="0.01"
+              value={packagingPerUnit} onChange={(event) => setPackagingPerUnit(event.target.value)} />
+          </div>
+          <div className="sup-field">
+            <label htmlFor={shippingMethodId}>{t('home.suppliers.shippingMethod')}</label>
+            <input id={shippingMethodId} className="sup-input" type="text" maxLength={80}
+              value={shippingMethod} onChange={(event) => setShippingMethod(event.target.value)} />
+          </div>
+          <div className="sup-field">
+            <label htmlFor={shippingCostId}>{t('home.suppliers.shippingPerUnit')}</label>
+            <input id={shippingCostId} className="sup-input" type="number" min={0} max={100000} step="0.01"
+              value={shippingPerUnit} onChange={(event) => setShippingPerUnit(event.target.value)} />
+          </div>
+          <div className="sup-field">
+            <label htmlFor={incotermId}>{t('home.suppliers.incoterm')}</label>
+            <input id={incotermId} className="sup-input" type="text" maxLength={32}
+              value={incoterm} onChange={(event) => setIncoterm(event.target.value)} />
+          </div>
+          <div className="sup-field">
+            <label htmlFor={customsId}>{t('home.suppliers.customsPercent')}</label>
+            <input id={customsId} className="sup-input" type="number" min={0} max={100} step="0.01"
+              value={customsPercent} onChange={(event) => setCustomsPercent(event.target.value)} />
           </div>
 
           <div className="sup-field is-wide">

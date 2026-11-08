@@ -89,6 +89,16 @@ export default function SupplierCard({
   const attached = supplier.scenarioIds
     .map((id) => ({ id, name: scenarioNames[id] }))
     .filter((entry): entry is { id: number; name: string } => typeof entry.name === 'string');
+  const logistics = supplier.logistics;
+  const logisticsDetails = logistics ? [
+    { label: t('home.suppliers.packagingDescription'), value: logistics.packaging },
+    { label: t('home.suppliers.unitsPerPackage'), value: logistics.unitsPerPackage === null ? '' : dayNumber(logistics.unitsPerPackage) },
+    { label: t('home.suppliers.packagingPerUnit'), value: logistics.packagingPerUnit === null ? '' : eur(logistics.packagingPerUnit) },
+    { label: t('home.suppliers.shippingMethod'), value: logistics.shippingMethod },
+    { label: t('home.suppliers.shippingPerUnit'), value: logistics.shippingPerUnit === null ? '' : eur(logistics.shippingPerUnit) },
+    { label: t('home.suppliers.incoterm'), value: logistics.incoterm },
+    { label: t('home.suppliers.customsPercent'), value: logistics.customsPercent === null ? '' : `${logistics.customsPercent} %` },
+  ].filter((detail) => detail.value !== '') : [];
 
   return (
     <article
@@ -199,6 +209,20 @@ export default function SupplierCard({
           <b>{supplier.unitPrice > 0 ? eur(supplier.unitPrice) : '—'}</b>
         </div>
       </div>
+
+      {logisticsDetails.length > 0 && (
+        <div className="sup-logistics">
+          <span className="sup-linked-lab">{t('home.suppliers.logisticsTitle')}</span>
+          <dl>
+            {logisticsDetails.map((detail) => (
+              <div key={detail.label}>
+                <dt>{detail.label}</dt>
+                <dd>{detail.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
 
       <div className="sup-linked">
         <span className="sup-linked-lab">

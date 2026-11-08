@@ -85,7 +85,7 @@ type AlertRow = {
   scenario: Scenario;
   threshold: { feasible: boolean; breakEvenPrice: number };
   seriesA: number[];
-  seriesB: number[] | null;
+  comparableB: number[] | null;
 };
 
 /** Same alerts, computed from the dashboard's already-loaded rows. */

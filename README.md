@@ -218,6 +218,13 @@ ceux du scenario. Le devis B est compare au devis A sur le meme cout rendu :
 son prix d'achat est converti en prix A equivalent, et seuils, verdicts et
 alertes utilisent ce prix. Ces couts sont stockes dans le navigateur uniquement.
 
+Le carnet fournisseurs permet aussi de noter le conditionnement, le nombre
+d'unites par colis, le transport, l'Incoterm et les frais indicatifs par
+unite (hors TVA). Ces informations sont stockees dans le navigateur et
+incluses dans les exports CSV et les sauvegardes du carnet. Elles ne sont pas
+appliquees automatiquement aux scenarios : saisir les frais dans le devis
+correspondant du calculateur.
+
 Le calcul ne remplace pas un conseil fiscal ni une grille Amazon : poids,
 dimensions, stockage, charges fixes, impots et situation TVA doivent etre
 confirmes. Les frais par defaut ne constituent pas un devis fournisseur.

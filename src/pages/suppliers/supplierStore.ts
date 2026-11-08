@@ -6,6 +6,23 @@ import {
   loadSupplierNames,
 } from '@/pages/home/priceHistory';
 
+export type SupplierLogistics = {
+  packaging: string;
+  unitsPerPackage: number | null;
+  packagingPerUnit: number | null;
+  shippingMethod: string;
+  shippingPerUnit: number | null;
+  incoterm: string;
+  customsPercent: number | null;
+};
+
+export function emptySupplierLogistics(): SupplierLogistics {
+  return {
+    packaging: '', unitsPerPackage: null, packagingPerUnit: null,
+    shippingMethod: '', shippingPerUnit: null, incoterm: '', customsPercent: null,
+  };
+}
+
 /** Une fiche fournisseur : ce qu'on sait d'un contact, sans passer par le
  *  calculateur. Les scénarios d'achat restent la source des chiffres ; ici on
  *  garde le contact, le délai, la quantité minimum et l'état de la relance. */
@@ -20,6 +37,7 @@ export type Supplier = {
   moq: number;
   /** Prix unitaire indicatif du dernier devis (0 = inconnu). */
   unitPrice: number;
+  logistics?: SupplierLogistics;
   /** Les fiches d'achat auxquelles ce fournisseur est rattaché. */
   scenarioIds: number[];
   /** Horodatage du dernier échange, null s'il n'a jamais été contacté. */
@@ -44,6 +62,28 @@ const toNumber = (value: unknown, max = 999999): number => {
   if (!Number.isFinite(number) || number < 0) return 0;
   return Math.min(max, Math.round(number * 100) / 100);
 };
+
+function optionalNumber(value: unknown, max: number, integer = false): number | null {
+  if (value === null || value === undefined || value === '') return null;
+  if (typeof value !== 'number' && typeof value !== 'string') return null;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > max || (integer && !Number.isInteger(parsed))) return null;
+  return integer ? parsed : Math.round(parsed * 100) / 100;
+}
+
+export function readSupplierLogistics(raw: unknown): SupplierLogistics {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return emptySupplierLogistics();
+  const entry = raw as Record<string, unknown>;
+  return {
+    packaging: typeof entry.packaging === 'string' ? slice(entry.packaging, 120) : '',
+    unitsPerPackage: optionalNumber(entry.unitsPerPackage, 1000000, true) || null,
+    packagingPerUnit: optionalNumber(entry.packagingPerUnit, 100000),
+    shippingMethod: typeof entry.shippingMethod === 'string' ? slice(entry.shippingMethod, 80) : '',
+    shippingPerUnit: optionalNumber(entry.shippingPerUnit, 100000),
+    incoterm: typeof entry.incoterm === 'string' ? slice(entry.incoterm, 32) : '',
+    customsPercent: optionalNumber(entry.customsPercent, 100),
+  };
+}
 
 function makeId(): string {
   return `sup-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -70,6 +110,7 @@ export function readSupplier(raw: unknown): Supplier | null {
     leadDays: toNumber(entry.leadDays, 400),
     moq: toNumber(entry.moq, 1000000),
     unitPrice: toNumber(entry.unitPrice, 100000),
+    logistics: readSupplierLogistics(entry.logistics),
     scenarioIds: Array.from(new Set(scenarioIds)).slice(0, 12),
     lastContact: Number.isFinite(lastContact) && lastContact > 0 ? lastContact : null,
     followUp: entry.followUp === true,

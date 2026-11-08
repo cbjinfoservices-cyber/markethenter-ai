@@ -1460,6 +1460,12 @@
   font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--text) 94%, transparent);
 }
 
+.sup-logistics { display: grid; gap: 5px; min-width: 0; }
+.sup-logistics dl { display: grid; gap: 4px; margin: 0; font-size: 11.5px; }
+.sup-logistics dl > div { display: flex; justify-content: space-between; gap: 10px; }
+.sup-logistics dt { color: color-mix(in srgb, var(--text) 68%, transparent); }
+.sup-logistics dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+
 .sup-linked { display: grid; gap: 5px; min-width: 0; }
 .sup-linked-lab {
   display: inline-flex; align-items: center; gap: 5px;
