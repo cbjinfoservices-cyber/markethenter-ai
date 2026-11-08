@@ -1,4 +1,5 @@
 import { compute } from '@/pages/home/calcModel';
+import { equivalentPrice } from '@/pages/home/quoteCosts';
 import { monthLabels } from '@/pages/home/priceHistory';
 import type { DashboardRow } from '@/pages/dashboard/useDashboard';
 
@@ -18,8 +19,8 @@ export type ProfitPoint = {
 
 /**
  * Monthly profit for the 12-month horizon, every scenario added up. Each
- * month is costed at the cheapest quote available for that month, so the
- * curve shows the money the seller would actually have made.
+ * month is costed at the quote that earns more that month, so the curve
+ * shows the money the seller would actually have made.
  */
 export function buildMonthlyProfit(
   rows: DashboardRow[],
@@ -30,9 +31,14 @@ export function buildMonthlyProfit(
     const parts: ProfitPart[] = rows.map((row, rowIndex) => {
       const a = row.seriesA[index] ?? 0;
       const b = row.seriesB ? row.seriesB[index] : null;
-      const quote = b !== null && Number.isFinite(b) ? Math.min(a, b) : a;
+      const hasB = b !== null && Number.isFinite(b);
+      const metricsA = compute({ ...row.scenario.values, supplier: String(a) });
+      const metricsB = hasB ? compute({ ...row.secondValues, supplier: String(b) }) : null;
+      const useB = metricsB !== null && metricsB.monthly > metricsA.monthly;
+      const metrics = metricsB !== null && useB ? metricsB : metricsA;
+      /* Seuil et prix exprimés en prix d'achat du devis A, pour comparer. */
+      const quote = useB && hasB ? equivalentPrice(b, row.scenario.values, row.secondValues) : a;
       const breakEven = row.threshold.feasible ? row.threshold.breakEvenPrice : 0;
-      const metrics = compute({ ...row.scenario.values, supplier: String(quote) });
       return {
         name: nameOf(row, rowIndex),
         value: metrics.monthly,

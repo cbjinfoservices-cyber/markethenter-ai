@@ -40,10 +40,7 @@ const stampOf = (stamp: number, locale: string): string => {
 /** Le devis d'un côté de la carte : le second fournisseur a son propre prix. */
 function quoteValuesOf(row: DashboardRow, side: MailSide): Values {
   if (side === 'b' && row.seriesB && row.seriesB.length > 0) {
-    return {
-      ...row.scenario.values,
-      supplier: String(row.seriesB[row.seriesB.length - 1]),
-    };
+    return row.secondValues;
   }
   return row.scenario.values;
 }

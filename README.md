@@ -211,6 +211,13 @@ autres frais, donne un net de 21,96 EUR et un ROI de **209,13 % sur le cout
 rendu de 10,50 EUR**, et non 108 %. Une commission Amazon supplementaire
 doit etre saisie si les 9,20 EUR ne la comprennent pas.
 
+Chaque devis fournisseur (A et B) garde ses propres transport, emballage et
+douane, saisis dans l'historique de prix. Un champ vide reprend la valeur du
+scenario. Les frais communs (commission, FBA, publicite, retours, TVA) restent
+ceux du scenario. Le devis B est compare au devis A sur le meme cout rendu :
+son prix d'achat est converti en prix A equivalent, et seuils, verdicts et
+alertes utilisent ce prix. Ces couts sont stockes dans le navigateur uniquement.
+
 Le calcul ne remplace pas un conseil fiscal ni une grille Amazon : poids,
 dimensions, stockage, charges fixes, impots et situation TVA doivent etre
 confirmes. Les frais par defaut ne constituent pas un devis fournisseur.

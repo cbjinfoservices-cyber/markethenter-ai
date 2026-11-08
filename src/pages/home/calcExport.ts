@@ -7,6 +7,7 @@ import {
   monthLabels,
 } from '@/pages/home/priceHistory';
 import { quotesOfScenario, supplierNameOf } from '@/pages/home/supplierCompare';
+import { loadQuoteCosts, quoteValues } from '@/pages/home/quoteCosts';
 import { FIELD_MEMORY_MAX } from '@/pages/home/fieldMemory';
 import type { FieldMemory } from '@/pages/home/fieldMemory';
 
@@ -84,6 +85,7 @@ export function buildScenariosCsv(
 
   /* One column per scenario, plus a second column when a second supplier
      quote was recorded for it — the supplier reads the two curves side by side. */
+  const costs = loadQuoteCosts();
   const columns: { values: Values; series: number[] }[] = [];
   scenarios.forEach((scenario) => {
     const key = `s${scenario.id}`;
@@ -97,7 +99,10 @@ export function buildScenariosCsv(
     });
     const secondStored = histories[`${key}${SECOND_SUFFIX}`];
     if (secondStored && secondStored.length === months.length) {
-      columns.push({ values: scenario.values, series: secondStored });
+      columns.push({
+        values: quoteValues(scenario.values, costs[`${key}${SECOND_SUFFIX}`]),
+        series: secondStored,
+      });
     }
   });
 

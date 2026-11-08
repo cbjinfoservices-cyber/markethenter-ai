@@ -217,6 +217,8 @@ export default {
   "home.calc.lastExportClear": "Clear the last export reminder",
   "home.calc.lastExportClearHint": "Removes this line so you start from a clean calculator. The next downloaded file brings it back.",
   "home.calc.historyCompareIntro": "Two bar series per month on the same scale: the scenario's supplier and a second quote. Edit both sets of figures from your real invoices.",
+  "home.calc.historyQuoteCostsTitle": "Quote 2 own costs",
+  "home.calc.historyQuoteCostsHint": "Shipping, packaging and customs of supplier 2. Empty = scenario value. The verdict compares landed costs.",
   "home.calc.historyAlertBoth": "{{a}} months above the break-even price ({{price}}) with {{nameA}}, {{b}} with {{nameB}}.",
   "home.calc.historyCompareCheaper": "{{name}}: {{value}} cheaper on average, {{price}} saved per unit.",
   "home.calc.historyComparePricier": "{{name}}: {{value}} more expensive on average, {{price}} more per unit.",

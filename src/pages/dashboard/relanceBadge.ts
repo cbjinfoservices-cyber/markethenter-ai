@@ -23,14 +23,21 @@ import {
   secondKey,
 } from '@/pages/home/priceHistory';
 import { useGoodFloor } from '@/pages/home/useGoodMargin';
+import { loadQuoteCosts, secondQuoteValues } from '@/pages/home/quoteCosts';
+import type { QuoteCosts } from '@/pages/home/quoteCosts';
 import { usePsychoRule } from '@/pages/home/usePsychoRule';
 import { MAIL_LOG_EVENT, loadMailLog, mailKey } from '@/pages/dashboard/mailLog';
 import type { MailLog, MailSide } from '@/pages/dashboard/mailLog';
 
-/** Le devis d'un côté : le second fournisseur a son propre prix d'achat. */
-function quoteValues(values: Values, side: MailSide, latestB: number | null): Values {
+/** Le devis d'un côté : le second fournisseur a ses propres coûts et son prix d'achat. */
+function quoteValues(
+  values: Values,
+  side: MailSide,
+  latestB: number | null,
+  costsB: QuoteCosts | undefined,
+): Values {
   if (side === 'b' && latestB !== null) {
-    return { ...values, supplier: String(latestB) };
+    return secondQuoteValues(values, costsB, latestB);
   }
   return values;
 }
@@ -56,8 +63,9 @@ export function countFollowUp(
     const latestB =
       storedB && storedB.length === HISTORY_MONTHS ? storedB[storedB.length - 1] : null;
     const sides: MailSide[] = latestB === null ? ['a'] : ['a', 'b'];
+    const costsB = loadQuoteCosts()[secondKey(key)];
     const waiting = sides.some((side) => {
-      const values = quoteValues(scenario.values, side, latestB);
+      const values = quoteValues(scenario.values, side, latestB, costsB);
       if (!buildable(values, goodFloor, psychoRule)) return false;
       return !(Number(mailLog[mailKey(scenario.id, side)]) > 0);
     });

@@ -19,10 +19,7 @@ import type { DashboardRow } from '@/pages/dashboard/useDashboard';
 /** Le devis d'un côté de la carte : le second fournisseur a son propre prix. */
 export function quoteValuesOf(row: DashboardRow, side: MailSide): Values {
   if (side === 'b' && row.seriesB && row.seriesB.length > 0) {
-    return {
-      ...row.scenario.values,
-      supplier: String(row.seriesB[row.seriesB.length - 1]),
-    };
+    return row.secondValues;
   }
   return row.scenario.values;
 }

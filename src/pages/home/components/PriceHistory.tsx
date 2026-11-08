@@ -20,6 +20,22 @@ import {
   persistHistory,
   secondKey,
 } from '@/pages/home/priceHistory';
+import {
+  equivalentSeries,
+  loadQuoteCosts,
+  persistQuoteCosts,
+  quoteValues,
+} from '@/pages/home/quoteCosts';
+import type { QuoteCosts } from '@/pages/home/quoteCosts';
+
+const EMPTY_QUOTE_COSTS: QuoteCosts = { shipping: '', packaging: '', customs: '' };
+
+/** Les trois coûts qui peuvent différer d'un fournisseur à l'autre. */
+const QUOTE_COST_FIELDS: { field: keyof QuoteCosts; label: string }[] = [
+  { field: 'shipping', label: 'home.calc.shipping' },
+  { field: 'packaging', label: 'home.calc.packaging' },
+  { field: 'customs', label: 'home.calc.customs' },
+];
 
 type Props = {
   historyKey: string;
@@ -86,6 +102,10 @@ export default function PriceHistory({
   );
   const [compare, setCompare] = useState<boolean>(
     () => Boolean(initialSecond && initialSecond.length === 12),
+  );
+  /* Transport, emballage et douane propres au devis B. */
+  const [costsB, setCostsB] = useState<QuoteCosts>(
+    () => loadQuoteCosts()[secondStorageKey] ?? EMPTY_QUOTE_COSTS,
   );
   const [editing, setEditing] = useState(false);
   /* L'adresse qu'on vient de copier, et si la copie a marché. */
@@ -171,9 +191,18 @@ export default function PriceHistory({
 
   const overA =
     breakEven > 0 ? series.filter((price) => price > breakEven + 0.005).length : 0;
+
+  /* Le devis B avec ses propres coûts, et ses prix ramenés à ceux du devis A
+     pour que le seuil et le verdict comparent des coûts rendus identiques. */
+  const valuesB = useMemo(() => quoteValues(values, costsB), [values, costsB]);
+  const comparableB = useMemo(
+    () => equivalentSeries(seriesB, values, valuesB),
+    [seriesB, values, valuesB],
+  );
+
   const overB =
     compare && breakEven > 0
-      ? seriesB.filter((price) => price > breakEven + 0.005).length
+      ? comparableB.filter((price) => price > breakEven + 0.005).length
       : 0;
 
   const nets = useMemo(
@@ -184,9 +213,9 @@ export default function PriceHistory({
   const netsB = useMemo(
     () =>
       compare
-        ? seriesB.map((price) => compute({ ...values, supplier: String(price) }).net)
+        ? seriesB.map((price) => compute({ ...valuesB, supplier: String(price) }).net)
         : [],
-    [compare, seriesB, values],
+    [compare, seriesB, valuesB],
   );
 
   const statsOf = (list: number[]) => {
@@ -226,7 +255,7 @@ export default function PriceHistory({
     let winsB = 0;
     let gap = 0;
     series.forEach((price, index) => {
-      const other = seriesB[index];
+      const other = comparableB[index];
       if (!Number.isFinite(other)) return;
       gap += price - other;
       if (other < price - 0.005) winsB += 1;
@@ -244,7 +273,7 @@ export default function PriceHistory({
           ? 'a'
           : 'b';
     return { winsA, winsB, ties, gap, verdict };
-  }, [series, seriesB]);
+  }, [series, comparableB]);
 
   const update = (index: number, raw: string, second = false) => {
     const parsed = Number(raw.replace(',', '.'));
@@ -267,6 +296,15 @@ export default function PriceHistory({
   const resetHistory = () => {
     setSeries(buildDefaultHistory(historyKey, basePrice));
     if (compare) setSeriesB(buildDefaultSecondHistory(secondStorageKey, basePrice));
+  };
+
+  /* Un coût du devis B change : on le garde pour ce scénario, dans ce navigateur. */
+  const updateCostB = (field: keyof QuoteCosts, value: string) => {
+    const next = { ...costsB, [field]: value };
+    setCostsB(next);
+    const all = loadQuoteCosts();
+    all[secondStorageKey] = next;
+    persistQuoteCosts(all);
   };
 
   return (
@@ -484,6 +522,36 @@ export default function PriceHistory({
       </div>
 
       {compare && (
+        <div className="ph-contact ph-quote-costs">
+          <span className="ph-contact-cap">
+            <i className="ri-calculator-line" aria-hidden="true" />
+            {t('home.calc.historyQuoteCostsTitle')}
+          </span>
+          <div className="ph-contact-row">
+            {QUOTE_COST_FIELDS.map(({ field, label }) => (
+              <label className="ph-contact-item" key={field}>
+                <span>{t(label)}</span>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  step={0.01}
+                  value={costsB[field]}
+                  placeholder={values[field]}
+                  aria-label={`${nameB} ${t(label)}`}
+                  onChange={(e) => updateCostB(field, e.target.value)}
+                />
+              </label>
+            ))}
+          </div>
+          <p className="calc-hint calc-hint--soft">
+            <i className="ri-information-line" aria-hidden="true" />
+            {t('home.calc.historyQuoteCostsHint')}
+          </p>
+        </div>
+      )}
+
+      {compare && (
         <div className="ph-legend">
           <span className="ph-legend-item">
             <span className="ph-swatch ph-swatch--a" aria-hidden="true" />
@@ -503,7 +571,7 @@ export default function PriceHistory({
             const cheaper = price < basePrice - 0.005;
             const isBest = index === bestIndex;
             const over = breakEven > 0 && price > breakEven + 0.005;
-            const overOther = compare && breakEven > 0 && other > breakEven + 0.005;
+            const overOther = compare && breakEven > 0 && comparableB[index] > breakEven + 0.005;
             return (
               <div
                 key={`${historyKey}-${months[index].short}`}

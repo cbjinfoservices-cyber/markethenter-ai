@@ -115,8 +115,8 @@ export function buildAlertsFromRows(
       });
     }
 
-    if (!row.seriesB) return;
-    const overB = countMonthsOver(row.seriesB, breakEven);
+    if (!row.comparableB) return;
+    const overB = countMonthsOver(row.comparableB, breakEven);
     if (overB > 0) {
       out.push({
         key: `${key}${SECOND_SUFFIX}`,

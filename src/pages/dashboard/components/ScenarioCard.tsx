@@ -170,13 +170,10 @@ export default function ScenarioCard({
   const hasSecondQuote = Boolean(comparison) && Boolean(row.seriesB?.length);
   const mailValues = useMemo(() => {
     if (mailSide === 'b' && row.seriesB && row.seriesB.length > 0) {
-      return {
-        ...row.scenario.values,
-        supplier: String(row.seriesB[row.seriesB.length - 1]),
-      };
+      return row.secondValues;
     }
     return row.scenario.values;
-  }, [mailSide, row.seriesB, row.scenario.values]);
+  }, [mailSide, row.seriesB, row.secondValues, row.scenario.values]);
 
   /* L'e-mail bilingue, prêt à copier depuis la carte : mêmes chiffres que la
      feuille fournisseur (plancher arrondi, puis prix d'achat qui le tient). */

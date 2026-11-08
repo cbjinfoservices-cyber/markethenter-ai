@@ -21,6 +21,12 @@ import {
 } from '@/pages/home/priceHistory';
 import { compareQuotes } from '@/pages/home/supplierCompare';
 import type { QuoteComparison } from '@/pages/home/supplierCompare';
+import {
+  equivalentSeries,
+  loadQuoteCosts,
+  secondQuoteValues,
+} from '@/pages/home/quoteCosts';
+import type { QuoteCosts } from '@/pages/home/quoteCosts';
 
 export type DashboardRow = {
   scenario: Scenario;
@@ -28,6 +34,10 @@ export type DashboardRow = {
   threshold: Threshold;
   seriesA: number[];
   seriesB: number[] | null;
+  /** Scenario values with the second quote's own transport, packaging and customs. */
+  secondValues: Values;
+  /** Second quote expressed as first-quote purchase prices, for comparisons. */
+  comparableB: number[] | null;
   comparison: QuoteComparison | null;
 };
 
@@ -68,6 +78,7 @@ function buildRows(
   scenarios: Scenario[],
   histories: Record<string, number[]>,
   target: number,
+  costs: Record<string, QuoteCosts>,
 ): DashboardRow[] {
   return scenarios.map((scenario) => {
     const key = `s${scenario.id}`;
@@ -78,13 +89,21 @@ function buildRows(
         : buildDefaultHistory(key, num(scenario.values.supplier));
     const storedB = histories[`${key}${SECOND_SUFFIX}`];
     const seriesB = storedB && storedB.length === HISTORY_MONTHS ? storedB : null;
+    const secondValues = secondQuoteValues(
+      scenario.values,
+      costs[`${key}${SECOND_SUFFIX}`],
+      seriesB ? seriesB[seriesB.length - 1] : null,
+    );
     return {
       scenario,
       metrics: compute(scenario.values),
       threshold: thresholdFor(scenario.values, target),
       seriesA,
       seriesB,
-      comparison: seriesB ? compareQuotes(seriesA, seriesB) : null,
+      secondValues,
+      comparableB: seriesB ? equivalentSeries(seriesB, scenario.values, secondValues) : null,
+      comparison:
+        seriesB ? compareQuotes(seriesA, equivalentSeries(seriesB, scenario.values, secondValues)) : null,
     };
   });
 }
@@ -155,7 +174,7 @@ export default function useDashboard() {
         setSnapshot({
           loading: false,
           error: false,
-          rows: buildRows(scenarios, histories, target),
+          rows: buildRows(scenarios, histories, target, loadQuoteCosts()),
           draft: storedDraft
             ? {
                 values: storedDraft,

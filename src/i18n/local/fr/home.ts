@@ -217,6 +217,8 @@ export default {
   "home.calc.lastExportClear": "Effacer le rappel du dernier export",
   "home.calc.lastExportClearHint": "Retire cette ligne pour repartir d'un calculateur propre. Le prochain fichier téléchargé la fera revenir.",
   "home.calc.historyCompareIntro": "Deux séries de barres par mois sur la même échelle : le fournisseur du scénario et un second devis. Ajustez les deux jeux de valeurs sur vos factures réelles.",
+  "home.calc.historyQuoteCostsTitle": "Coûts propres au devis 2",
+  "home.calc.historyQuoteCostsHint": "Transport, emballage et douane du fournisseur 2. Vide = valeur du scénario. Le verdict compare les coûts rendus.",
   "home.calc.historyAlertBoth": "{{a}} mois au-dessus du prix d'équilibre ({{price}}) chez {{nameA}}, {{b}} chez {{nameB}}.",
   "home.calc.historyCompareCheaper": "{{name}} : {{value}} moins cher en moyenne, soit {{price}} d'économie par unité.",
   "home.calc.historyComparePricier": "{{name}} : {{value}} plus cher en moyenne, soit {{price}} de plus par unité.",

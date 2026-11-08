@@ -47,7 +47,7 @@ export default function SupplierBoard({ rows, locale, supplierNames }: Props) {
           const breakEven = row.threshold.feasible ? row.threshold.breakEvenPrice : 0;
           const overA = breakEven > 0 ? countMonthsOver(row.seriesA, breakEven) : 0;
           const overB =
-            row.seriesB && breakEven > 0 ? countMonthsOver(row.seriesB, breakEven) : 0;
+            row.comparableB && breakEven > 0 ? countMonthsOver(row.comparableB, breakEven) : 0;
           const monthsOver = overA + overB;
           return { row, index, monthsOver, alerted: monthsOver > 0, breakEven };
         })

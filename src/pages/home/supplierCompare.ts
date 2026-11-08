@@ -5,6 +5,12 @@ import {
   SECOND_SUFFIX,
   buildDefaultHistory,
 } from '@/pages/home/priceHistory';
+import {
+  equivalentSeries,
+  loadQuoteCosts,
+  quoteValues,
+} from '@/pages/home/quoteCosts';
+import type { QuoteCosts } from '@/pages/home/quoteCosts';
 
 export type QuoteWinner = 'a' | 'b' | 'tie';
 
@@ -83,10 +89,15 @@ export type ScenarioQuotes = {
   comparison: QuoteComparison | null;
 };
 
-/** Pulls both quotes for one scenario out of the shared history map. */
+/**
+ * Pulls both quotes for one scenario out of the shared history map. The
+ * comparison uses the second quote's own costs, expressed as first-quote
+ * prices, so the verdict follows the real landed cost of each supplier.
+ */
 export function quotesOfScenario(
   scenario: Scenario,
   histories: Record<string, number[]>,
+  costs: Record<string, QuoteCosts> = loadQuoteCosts(),
 ): ScenarioQuotes {
   const key = `s${scenario.id}`;
   const base = num(scenario.values.supplier);
@@ -97,10 +108,18 @@ export function quotesOfScenario(
   const storedB = histories[`${key}${SECOND_SUFFIX}`];
   const seriesB = storedB && storedB.length === HISTORY_MONTHS ? storedB : null;
 
+  const comparableB = seriesB
+    ? equivalentSeries(
+        seriesB,
+        scenario.values,
+        quoteValues(scenario.values, costs[`${key}${SECOND_SUFFIX}`]),
+      )
+    : null;
+
   return {
     seriesA,
     seriesB,
-    comparison: seriesB ? compareQuotes(seriesA, seriesB) : null,
+    comparison: comparableB ? compareQuotes(seriesA, comparableB) : null,
   };
 }
 
