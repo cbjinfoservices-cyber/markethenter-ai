@@ -1,0 +1,128 @@
+/* ===================================================================
+   PLANCHER DE CONTRASTE — LES PAGES DE TRAVAIL EN THÈME CLAIR
+   Même principe que la couche de lisibilité de l'accueil, mais appliqué
+   aux trois pages qui ont leurs propres couleurs : le calculateur, le
+   tableau de bord et le sourcing. Le fond reste du papier, seulement le
+   petit texte gris remonte d'un cran et les filets reprennent un peu de
+   présence. Aucun jeton de thème sombre n'est touché.
+   =================================================================== */
+
+/* 1. LE GRIS DE SERVICE DESCEND D'UN CRAN SUR LE PAPIER.
+   Le ton « muted » avait été réglé pour un fond sombre : sur blanc, les
+   libellés en 8-9 px passaient sous le seuil de lecture. */
+.calc-page[data-calc-skin="light"],
+.dash-page[data-dash-skin="light"] { --muted: #46535f; }
+
+/* 2. LES PETITS LIBELLÉS ET LES NOTES.
+   Tous les éléments dont le nom dit « note, hint, méta, légende, date,
+   portée, échelle, pied » sont du texte secondaire : ils remontent
+   ensemble, d'un seul mouvement, au lieu d'être repris un par un. */
+.calc-page[data-calc-skin="light"] :where(
+  [class*="-hint"],
+  [class*="-note"],
+  [class*="-meta"],
+  [class*="-when"],
+  [class*="-saved"],
+  [class*="-scope"],
+  [class*="-stats"],
+  [class*="-axis"],
+  [class*="-origin"],
+  [class*="-range"],
+  [class*="-count"],
+  [class*="-foot"],
+  [class*="-cap"]
+),
+.dash-page[data-dash-skin="light"] :where(
+  [class*="-hint"],
+  [class*="-note"],
+  [class*="-meta"],
+  [class*="-when"],
+  [class*="-saved"],
+  [class*="-scope"],
+  [class*="-stats"],
+  [class*="-axis"],
+  [class*="-origin"],
+  [class*="-range"],
+  [class*="-count"],
+  [class*="-foot"],
+  [class*="-cap"]
+) { color: color-mix(in srgb, var(--text) 78%, transparent); }
+
+/* 3. LE TEXTE COURANT DES CARTES ET DES PANNEAUX.
+   À 60-70 % il se délavait ; à 84 % il se lit sans devenir du noir pur. */
+.calc-page[data-calc-skin="light"] :is(
+  .calc-hero-sub,
+  .calc-pit p,
+  .calc-read-card p,
+  .calc-read-head p,
+  .calc-next-copy em,
+  .calc-legend-copy p,
+  .calc-res-tile em,
+  .calc-res-row dt,
+  .calc-group-meta,
+  .ph-price,
+  .ph-month,
+  .ph-net,
+  .ph-edit span
+),
+.dash-page[data-dash-skin="light"] :is(
+  .dash-sub,
+  .dash-card p,
+  .dash-card-none,
+  .dash-tally-ok,
+  .dash-tally-floor,
+  .dash-tally-sync,
+  .dash-empty-preview-note,
+  .dc-zero em,
+  .src-card p,
+  .src-brief-item,
+  .src-view-saved,
+  .src-view-when,
+  .src-history-when,
+  .src-history-see,
+  .src-compare-mail-when,
+  .src-median-scope,
+  .src-median-foot,
+  .src-mtrend-axis,
+  .src-mtrend-now,
+  .src-cmpbar-counts > span
+) { color: color-mix(in srgb, var(--text) 84%, transparent); }
+
+/* 4. LES RÉPONSES AUX CONSIGNES GARDENT LEUR COULEUR.
+   Le plancher ci-dessus ne doit pas éteindre un avertissement : ces trois
+   variantes reprennent la main après lui. */
+.calc-page[data-calc-skin="light"] .calc-hint--warn,
+.calc-page[data-calc-skin="light"] .calc-hint--fail { color: var(--accent2); }
+.calc-page[data-calc-skin="light"] .calc-hint--ok { color: #1a7a4d; }
+.calc-page[data-calc-skin="light"] .calc-floor-sync.is-on { color: #1a7a4d; }
+
+/* 5. LES FILETS DE SÉPARATION.
+   À 12 % ils disparaissaient sur le blanc : les blocs se fondaient les uns
+   dans les autres. Ils reprennent une présence de papier. */
+.calc-page[data-calc-skin="light"] :where(
+  .calc-pit,
+  .calc-read-card,
+  .calc-legend,
+  .calc-card,
+  .calc-mem,
+  .calc-mem-switch
+),
+.dash-page[data-dash-skin="light"] :where(
+  .dash-card,
+  .dash-readout,
+  .dc,
+  .dash-duel,
+  .dash-empty-block,
+  .src-card,
+  .src-filters,
+  .src-median,
+  .src-notice,
+  .src-compare
+) { border-color: color-mix(in srgb, var(--text) 18%, transparent); }
+
+.calc-page[data-calc-skin="light"] :where(
+  .calc-res-row,
+  .calc-res-table,
+  .calc-res-tile,
+  .calc-inputs-head
+) { border-color: color-mix(in srgb, var(--text) 16%, transparent); }

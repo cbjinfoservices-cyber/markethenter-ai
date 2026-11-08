@@ -1,0 +1,1762 @@
+/* FOURNISSEURS — le carnet de contacts, les conditions, les relances */
+
+.sup-hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+
+/* DÉPOSER LA SAUVEGARDE SUR LA PAGE — le fichier glissé ouvre son aperçu */
+.sup-drop {
+  position: fixed; inset: 0; z-index: 200; display: flex;
+  align-items: center; justify-content: center; padding: 24px;
+  background: color-mix(in srgb, var(--surface) 76%, transparent);
+  backdrop-filter: blur(3px); pointer-events: none;
+  animation: sup-fade .14s ease-out;
+}
+.sup-drop-card {
+  display: grid; justify-items: center; gap: 6px; padding: 28px 34px;
+  border-radius: 20px; text-align: center;
+  border: 2px dashed color-mix(in srgb, var(--accent) 62%, transparent);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  box-shadow: 0 40px 80px -50px rgba(0, 0, 0, .95);
+}
+.sup-drop-card > i { font-size: 30px; color: var(--accent); }
+.sup-drop-card b { font-size: 16px; letter-spacing: -.015em; }
+.sup-drop-card span {
+  max-width: 42ch; font-size: 12.5px; line-height: 1.5;
+  color: color-mix(in srgb, var(--text) 72%, transparent);
+}
+
+/* LA DERNIÈRE RESTAURATION — le fichier et la date, sous les boutons */
+.sup-restore-note {
+  display: inline-flex; align-items: center; gap: 6px; margin: 9px 0 0; padding: 4px 10px;
+  border-radius: 999px; max-width: 100%; min-width: 0; overflow-wrap: anywhere;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+}
+.sup-restore-note i { flex: 0 0 auto; font-size: 12px; color: var(--accent2); }
+
+/* L'HISTORIQUE — les trois dernières restaurations, sous les boutons */
+.sup-restore-log {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  margin-top: 9px; min-width: 0;
+}
+.sup-restore-log-lab {
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+}
+.sup-restore-log-lab i { font-size: 12px; color: var(--accent2); }
+.sup-restore-log-list {
+  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  margin: 0; padding: 0; list-style: none; min-width: 0;
+}
+.sup-restore-log .sup-restore-note { margin: 0; gap: 5px; }
+.sup-restore-file {
+  max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: color-mix(in srgb, var(--text) 86%, transparent);
+}
+.sup-restore-sep { opacity: .45; }
+.sup-restore-count {
+  font-weight: 700; letter-spacing: .04em;
+  color: color-mix(in srgb, var(--accent2) 88%, var(--text));
+}
+/* LES PASTILLES REPOSÉES — le second compte de la ligne, à côté des fiches */
+.sup-restore-views {
+  font-weight: 700; letter-spacing: .04em;
+  color: color-mix(in srgb, var(--text) 82%, transparent);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  border-radius: 999px; padding: 0 5px;
+}
+/* RETIRER UNE LIGNE — la croix ne sort qu'au moment où on tient la ligne */
+.sup-restore-log .sup-restore-note {
+  padding-right: 2px;
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  transition: color .18s ease-out, background .18s ease-out, border-color .18s ease-out;
+}
+/* LE MAINTIEN — la ligne s'assombrit et un mince anneau se remplit */
+@property --sup-hold {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+.sup-restore-log .sup-restore-note.is-holding {
+  color: color-mix(in srgb, var(--text) 40%, transparent);
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  border-color: color-mix(in srgb, var(--text) 12%, transparent);
+}
+.sup-restore-log .sup-restore-note.is-holding .sup-restore-file,
+.sup-restore-log .sup-restore-note.is-holding .sup-restore-count,
+.sup-restore-log .sup-restore-note.is-holding .sup-restore-views {
+  color: color-mix(in srgb, var(--text) 38%, transparent);
+  background: transparent;
+}
+.sup-restore-ring {
+  flex: 0 0 auto; width: 12px; height: 12px; border-radius: 50%; opacity: 0;
+  --sup-hold: 0;
+  background: conic-gradient(var(--alert) calc(var(--sup-hold) * 360deg), transparent 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+}
+.sup-restore-ring.is-on {
+  opacity: 1;
+  animation: sup-hold-fill var(--sup-hold-ms, 860ms) linear forwards;
+}
+@keyframes sup-hold-fill {
+  from { --sup-hold: 0; }
+  to { --sup-hold: 1; }
+}
+.sup-restore-log .sup-restore-note.is-armed {
+  color: var(--alert);
+  background: color-mix(in srgb, var(--alert) 15%, transparent);
+  border-color: color-mix(in srgb, var(--alert) 55%, transparent);
+}
+.sup-restore-log .sup-restore-note.is-armed .sup-restore-file,
+.sup-restore-log .sup-restore-note.is-armed .sup-restore-count,
+.sup-restore-log .sup-restore-note.is-armed .sup-restore-views {
+  color: var(--alert);
+}
+.sup-restore-drop {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; color: color-mix(in srgb, var(--text) 52%, transparent);
+  font-size: 11px; line-height: 1;
+  opacity: 0; transform: scale(.78); pointer-events: none;
+  transition: color .18s ease-out, background .18s ease-out, opacity .16s ease-out,
+    transform .16s ease-out;
+}
+.sup-restore-log .sup-restore-note.is-armed .sup-restore-drop,
+.sup-restore-drop:focus-visible {
+  opacity: 1; transform: none; pointer-events: auto;
+}
+.sup-restore-log .sup-restore-note.is-armed .sup-restore-drop { color: var(--alert); }
+.sup-restore-drop:hover {
+  color: var(--alert); background: color-mix(in srgb, var(--alert) 18%, transparent);
+}
+.sup-restore-drop:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--alert) 68%, transparent); outline-offset: 1px;
+}
+.sup-restore-keys-sep { opacity: .4; margin: 0 2px; }
+
+/* LE RÉCAPITULATIF DES RACCOURCIS — toutes les touches, au même endroit */
+.sup-help-btn { white-space: nowrap; }
+.sup-help-wrap {
+  position: fixed; inset: 0; z-index: 210; display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: color-mix(in srgb, #05090d 62%, transparent);
+  backdrop-filter: blur(6px); animation: sup-fade .16s ease-out;
+}
+.sup-help {
+  width: min(680px, 100%); max-height: min(86vh, 720px); overflow-y: auto;
+  display: grid; gap: 12px; padding: 18px; border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 98%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  box-shadow: 0 40px 80px -50px rgba(0, 0, 0, .95);
+}
+.sup-help-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sup-help-head h2 {
+  display: inline-flex; align-items: center; gap: 8px; margin: 0;
+  font-size: 17px; letter-spacing: -.02em;
+}
+.sup-help-head h2 i { font-size: 17px; color: var(--accent); }
+.sup-help-x {
+  display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+  border: 0; border-radius: 50%; background: transparent; color: var(--muted);
+  font-size: 15px; cursor: pointer;
+}
+.sup-help-x:hover { background: color-mix(in srgb, var(--text) 12%, transparent); color: var(--text); }
+.sup-help-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+.sup-help-intro {
+  margin: 0; font-size: 12px; line-height: 1.55;
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+}
+.sup-help-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); gap: 10px; }
+.sup-help-group {
+  display: grid; gap: 6px; align-content: start; padding: 10px 11px; border-radius: 12px;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+}
+.sup-help-group h3 {
+  display: inline-flex; align-items: center; gap: 5px; margin: 0;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .1em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 66%, transparent);
+}
+.sup-help-group h3 i { font-size: 12px; color: var(--accent2); }
+.sup-help-group ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.sup-help-group li { display: grid; gap: 3px; min-width: 0; }
+.sup-help-keys { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.sup-help-keys kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 5px; border-radius: 5px;
+  font-family: var(--font-label); font-size: 9px; line-height: 1;
+  color: color-mix(in srgb, var(--text) 90%, transparent);
+  background: color-mix(in srgb, var(--text) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 24%, transparent);
+  border-bottom-width: 2px;
+}
+.sup-help-ell { font-size: 10px; color: color-mix(in srgb, var(--text) 50%, transparent); }
+.sup-help-label {
+  font-size: 11px; line-height: 1.45; overflow-wrap: anywhere;
+  color: color-mix(in srgb, var(--text) 82%, transparent);
+}
+.sup-help-foot {
+  display: flex; align-items: flex-start; gap: 6px; margin: 0; font-size: 10.5px; line-height: 1.5;
+  color: color-mix(in srgb, var(--text) 64%, transparent);
+}
+.sup-help-foot i { flex: 0 0 auto; font-size: 12px; color: var(--accent2); margin-top: 1px; }
+/* LE RACCOURCI — Alt + B, rappelé sous les boutons */
+.sup-restore-keys {
+  display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; row-gap: 3px; margin: 8px 0 0;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 56%, transparent);
+}
+.sup-restore-keys kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; padding: 1px 4px; border-radius: 4px;
+  font-family: var(--font-label); font-size: 8px; line-height: 1.5;
+  border: 1px solid color-mix(in srgb, var(--text) 24%, transparent);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+}
+.sup-restore-keys kbd + kbd { margin-left: -1px; }
+.sup-readout-value {
+  font-size: clamp(38px, 5vw, 58px); font-weight: 600; letter-spacing: -.035em;
+  line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.sup-readout .dash-readout-grid b.is-due { color: var(--accent2); }
+
+/* LA BARRE D'OUTILS */
+.sup-tools {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  position: relative;
+  margin-top: 14px; padding: 10px; border-radius: 16px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 13%, transparent);
+}
+.sup-search {
+  position: relative; display: flex; align-items: center; gap: 8px; flex: 1 1 220px; min-width: 0;
+  height: 34px; padding: 0 10px; border-radius: 10px;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+  transition: border-color .2s ease-out, background .2s ease-out;
+}
+.sup-search:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.sup-search > i { flex: 0 0 auto; font-size: 14px; color: var(--accent); }
+.sup-search-input {
+  flex: 1 1 auto; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent;
+  color: var(--text); font-family: var(--font-body); font-size: 13px;
+}
+.sup-search-input::placeholder { color: color-mix(in srgb, var(--text) 52%, transparent); }
+.sup-search-input::-webkit-search-cancel-button { display: none; }
+.sup-search-x {
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; color: var(--muted); font-size: 13px;
+}
+.sup-search-x:hover { color: var(--text); background: color-mix(in srgb, var(--text) 12%, transparent); }
+
+.sup-filters { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+/* LE TRI — nom, pays, ou délai du plus lent au plus rapide */
+.sup-sort { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.sup-sort-lab {
+  display: inline-flex; align-items: center; gap: 5px; margin-right: 2px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .09em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+}
+.sup-sort-lab i { font-size: 12px; color: var(--accent); }
+.sup-sort-btn {
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+  background: transparent; cursor: pointer; white-space: nowrap;
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .09em; text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out;
+}
+.sup-sort-btn i { font-size: 12px; }
+.sup-sort-btn:hover { color: var(--text); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.sup-sort-btn.is-on { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.sup-sort-btn.is-on i { color: var(--bg); }
+.sup-sort-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+/* Le rappel, quand on regarde les plus lents */
+.sup-slow {
+  display: inline-flex; align-items: center; gap: 6px; margin: 12px 0 0; padding: 5px 11px;
+  border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent2) 92%, var(--text));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+}
+.sup-slow i { font-size: 12px; }
+/* LE SEUIL DE DÉLAI — « supérieur à X jours », en un clic ou au clavier */
+.sup-lead {
+  display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding: 3px 3px 3px 9px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+  background: transparent;
+  transition: border-color .2s ease-out, background .2s ease-out;
+}
+.sup-lead.is-on {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.sup-lead-lab {
+  display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .09em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+}
+.sup-lead-lab i { font-size: 12px; color: var(--accent2); }
+.sup-lead.is-on .sup-lead-lab { color: color-mix(in srgb, var(--accent) 82%, var(--text)); }
+.sup-lead-presets { display: inline-flex; align-items: center; gap: 3px; }
+.sup-lead-preset {
+  padding: 4px 8px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 72%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .06em;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-lead-preset:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.sup-lead-preset.is-on {
+  color: var(--bg); background: var(--accent); border-color: var(--accent);
+}
+.sup-lead-field {
+  display: inline-flex; align-items: center; gap: 2px; height: 24px; padding: 0 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+}
+.sup-lead-field:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.sup-lead-input {
+  width: 34px; min-width: 0; border: 0; outline: 0; background: transparent;
+  color: var(--text); font-family: var(--font-label); font-size: 11px;
+  font-variant-numeric: tabular-nums; text-align: center;
+  -moz-appearance: textfield; appearance: textfield;
+}
+.sup-lead-input::-webkit-outer-spin-button,
+.sup-lead-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.sup-lead-input::placeholder { color: color-mix(in srgb, var(--text) 48%, transparent); }
+.sup-lead-unit {
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .04em;
+  color: color-mix(in srgb, var(--text) 58%, transparent);
+}
+.sup-lead-go {
+  padding: 4px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--accent) 46%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent2);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, background .18s ease-out, border-color .18s ease-out;
+}
+.sup-lead-go:hover { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.sup-lead-x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+  border: 0; background: transparent; color: var(--accent); font-size: 13px;
+  transition: background .18s ease-out, color .18s ease-out;
+}
+.sup-lead-x:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.sup-lead-preset:focus-visible, .sup-lead-go:focus-visible, .sup-lead-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+/* Le rappel du seuil, sous le compteur */
+.sup-lead-note {
+  display: inline-flex; align-items: center; gap: 6px; margin: 10px 0 0; padding: 5px 11px;
+  border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent2) 92%, var(--text));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+}
+.sup-lead-note i { font-size: 12px; }
+/* Le seuil de référence reste affiché en pastille, même filtre retiré */
+.sup-lead-note.is-ref {
+  border-style: dashed;
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--text) 30%, transparent);
+}
+
+.sup-filter {
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+  background: transparent; cursor: pointer; white-space: nowrap;
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .09em; text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out;
+}
+.sup-filter:hover { color: var(--text); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.sup-filter.is-on {
+  color: var(--bg); background: var(--accent); border-color: var(--accent);
+}
+.sup-filter-count {
+  padding: 0 5px; border-radius: 999px; font-size: 8px; line-height: 1.6;
+  background: color-mix(in srgb, var(--text) 12%, transparent);
+}
+.sup-filter.is-on .sup-filter-count {
+  background: color-mix(in srgb, var(--bg) 26%, transparent); color: var(--bg);
+}
+.sup-filter:focus-visible, .sup-pull:focus-visible, .sup-search-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+.sup-pull {
+  display: inline-flex; align-items: center; gap: 6px; margin-left: auto; padding: 7px 11px;
+  border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--text) 26%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .2s ease-out, border-color .2s ease-out, background .2s ease-out;
+}
+.sup-pull i { font-size: 13px; color: var(--accent2); }
+.sup-pull:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.sup-toast {
+  display: inline-flex; align-items: center; gap: 6px; margin: 12px 0 0; padding: 7px 12px;
+  border-radius: 999px; font-size: 11.5px; line-height: 1.4;
+  color: var(--good); background: color-mix(in srgb, var(--good) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--good) 38%, transparent);
+  animation: sup-toast-in .18s ease-out;
+}
+.sup-toast.is-exportFail, .sup-toast.is-importNone {
+  color: var(--accent2); background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+}
+.sup-toast i { font-size: 13px; }
+@keyframes sup-toast-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* COPIER LE LIEN — la vue partageable, à côté du seuil de délai */
+.sup-link {
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--text) 28%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-link i { font-size: 12px; color: var(--accent2); }
+.sup-link:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.sup-link.is-done {
+  color: var(--good); border-style: solid;
+  border-color: color-mix(in srgb, var(--good) 52%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent);
+}
+.sup-link.is-done i { color: var(--good); }
+.sup-link.is-fail {
+  color: var(--alert); border-style: solid;
+  border-color: color-mix(in srgb, var(--alert) 52%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+}
+.sup-link.is-fail i { color: var(--alert); }
+.sup-link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+/* LES VUES GARDÉES — seuil + tri + filtre rangés sous un nom */
+.sup-views {
+  display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0;
+}
+.sup-view-keep {
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--accent) 42%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, background .18s ease-out, border-color .18s ease-out;
+}
+.sup-view-keep i { font-size: 12px; }
+.sup-view-keep:hover {
+  color: var(--bg); background: var(--accent); border-color: var(--accent);
+}
+/* Les réglages sont déjà ceux d'une vue gardée : le bouton s'éteint */
+.sup-view-keep:disabled {
+  cursor: not-allowed; opacity: .55;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--text) 26%, transparent);
+}
+.sup-view-keep.is-same {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--good) 42%, transparent);
+  opacity: 1;
+  color: color-mix(in srgb, var(--good) 88%, var(--text));
+}
+.sup-view-same {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--good) 82%, var(--text));
+}
+.sup-view-same i { font-size: 11px; }
+.sup-view-keep:focus-visible, .sup-view-save:focus-visible, .sup-view-x:focus-visible,
+.sup-view-apply:focus-visible, .sup-view-del:focus-visible, .sup-view-rename:focus-visible,
+.sup-view-dup:focus-visible, .sup-view-undo-btn:focus-visible,
+.sup-view-pin:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+.sup-view-form {
+  display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 3px 0 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+.sup-view-input {
+  width: 116px; min-width: 0; border: 0; outline: 0; background: transparent;
+  color: var(--text); font-family: var(--font-label); font-size: 11px; letter-spacing: .02em;
+}
+.sup-view-input::placeholder { color: color-mix(in srgb, var(--text) 50%, transparent); }
+.sup-view-save {
+  padding: 4px 9px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--accent) 46%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent2);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+}
+.sup-view-save:hover { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.sup-view-save:disabled {
+  cursor: default; opacity: .45; color: var(--muted);
+  background: transparent; border-color: color-mix(in srgb, var(--text) 24%, transparent);
+}
+.sup-view-x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; color: var(--muted); font-size: 13px;
+}
+.sup-view-x:hover { color: var(--text); background: color-mix(in srgb, var(--text) 12%, transparent); }
+.sup-view-list {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+  margin: 0; padding: 0; list-style: none; min-width: 0;
+}
+.sup-view-chip {
+  display: inline-flex; align-items: center; overflow: hidden; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  background: transparent;
+  transition: border-color .18s ease-out, background .18s ease-out;
+}
+.sup-view-chip:hover { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+/* APPUI LONG SUR UNE PASTILLE — elle s'assombrit, puis sa croix sort */
+.sup-view-chip.is-holding {
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  border-color: color-mix(in srgb, var(--alert) 42%, transparent);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+.sup-view-chip.is-holding .sup-view-apply,
+.sup-view-chip.is-holding .sup-view-count,
+.sup-view-chip.is-holding .sup-view-lead,
+.sup-view-chip.is-holding .sup-view-recall {
+  color: color-mix(in srgb, var(--text) 42%, transparent);
+}
+.sup-view-chip.is-holding .sup-view-apply i { color: color-mix(in srgb, var(--accent2) 40%, transparent); }
+.sup-view-chip.is-holding.is-armed {
+  border-color: color-mix(in srgb, var(--alert) 58%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+}
+.sup-view-chip.is-holding.is-armed .sup-view-apply { color: var(--alert); }
+.sup-view-chip.is-holding.is-armed .sup-view-apply i { color: var(--alert); }
+.sup-view-chip.is-on {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+}
+/* ÉPINGLÉE — la pastille reste la première de la liste */
+.sup-view-chip.is-pinned {
+  border-color: color-mix(in srgb, var(--accent) 46%, transparent);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.sup-view-pin {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 0 auto; width: 20px; height: 20px; margin-left: 3px;
+  border: 0; border-radius: 50%; background: transparent; cursor: pointer;
+  color: color-mix(in srgb, var(--text) 52%, transparent); font-size: 10px;
+  transition: color .18s ease-out, background .18s ease-out;
+}
+.sup-view-pin i { font-size: 11px; }
+.sup-view-pin:hover {
+  color: var(--accent2); background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.sup-view-pin.is-on { color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+/* Le délai le plus lent que porte la vue, lu sans la rappeler */
+.sup-view-lead {
+  flex: 0 0 auto; margin-left: 5px; padding: 1px 5px; border-radius: 999px;
+  font-size: 7.5px; letter-spacing: .06em; font-variant-numeric: tabular-nums;
+  white-space: nowrap; color: var(--accent2);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+}
+/* Le nombre de fiches que la vue retient, à côté du délai le plus lent */
+.sup-view-count {
+  flex: 0 0 auto; margin-left: 5px; padding: 1px 5px; border-radius: 999px;
+  font-size: 7.5px; letter-spacing: .06em; font-variant-numeric: tabular-nums;
+  white-space: nowrap; color: color-mix(in srgb, var(--text) 68%, transparent);
+  background: color-mix(in srgb, var(--text) 9%, transparent);
+}
+/* LE NOMBRE DE RAPPELS — le badge « ×3 », à côté du nom */
+.sup-view-recall {
+  flex: 0 0 auto; margin-left: 4px; padding: 1px 4px; border-radius: 999px;
+  font-size: 7.5px; letter-spacing: .04em; font-variant-numeric: tabular-nums;
+  white-space: nowrap; font-weight: 600;
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+}
+/* RÉORDONNER LES ÉPINGLÉES — deux flèches, sans détacher la pastille */
+.sup-view-moves {
+  display: inline-flex; flex-direction: column; gap: 0; flex: 0 0 auto;
+  border-left: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  padding-left: 1px; margin-left: 2px;
+}
+.sup-view-move {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 9px; padding: 0; border: 0; background: transparent;
+  cursor: pointer; color: var(--muted); font-size: 10px; line-height: 1;
+  transition: color .18s ease-out, background .18s ease-out;
+}
+.sup-view-move i { font-size: 13px; }
+.sup-view-move:hover:not(:disabled) {
+  color: var(--accent2); background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.sup-view-move:disabled { opacity: .28; cursor: default; }
+.sup-view-move:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 1px;
+}
+/* GLISSER UNE ÉPINGLÉE — la pastille se déplace à la souris */
+.sup-view-chip.is-draggable { cursor: grab; }
+.sup-view-chip.is-draggable:active { cursor: grabbing; }
+.sup-view-chip.is-dragging { opacity: .45; border-style: dashed; }
+.sup-view-chip.is-drop {
+  border-color: color-mix(in srgb, var(--accent) 78%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.sup-view-apply {
+  display: inline-flex; align-items: center; gap: 4px; min-width: 0;
+  padding: 5px 3px 5px 9px; border: 0; background: transparent; cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: color-mix(in srgb, var(--text) 82%, transparent);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+}
+.sup-view-apply i { font-size: 11px; color: var(--accent2); }
+.sup-view-chip.is-on .sup-view-apply { color: color-mix(in srgb, var(--accent) 92%, var(--text)); }
+.sup-view-del {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; margin-right: 3px; border: 0; border-radius: 50%;
+  background: transparent; cursor: pointer; color: var(--muted); font-size: 11px;
+  opacity: 0; transform: scale(.72); pointer-events: none;
+  transition: opacity .16s ease-out, transform .16s ease-out,
+    color .18s ease-out, background .18s ease-out;
+}
+/* La croix ne sort qu'une fois la pastille tenue — ou atteinte au clavier */
+.sup-view-chip.is-armed .sup-view-del,
+.sup-view-del:focus-visible {
+  opacity: 1; transform: none; pointer-events: auto;
+}
+.sup-view-del:hover {
+  color: var(--alert); background: color-mix(in srgb, var(--alert) 14%, transparent);
+}
+/* RENOMMER — la pastille se transforme en champ, sans perdre ses réglages */
+.sup-view-rename, .sup-view-dup {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border: 0; border-radius: 50%;
+  background: transparent; cursor: pointer; color: var(--muted); font-size: 10px;
+  transition: color .18s ease-out, background .18s ease-out;
+}
+.sup-view-rename:hover, .sup-view-dup:hover {
+  color: var(--accent2); background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+/* LA GOMME D'UNE PASTILLE — son compteur seul repart de zéro */
+.sup-view-gomme {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 0 auto; width: 20px; height: 20px; border: 0; border-radius: 50%;
+  background: transparent; cursor: pointer; color: var(--muted); font-size: 10px;
+  transition: color .18s ease-out, background .18s ease-out, opacity .18s ease-out;
+}
+.sup-view-gomme:hover:not(:disabled) {
+  color: var(--accent2); background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.sup-view-gomme:disabled {
+  cursor: default; opacity: .3;
+}
+.sup-view-gomme:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+.sup-view-chip.is-renaming { padding-right: 3px; }
+.sup-view-rename-form {
+  display: inline-flex; align-items: center; gap: 4px; padding-left: 9px;
+}
+.sup-view-rename-form .sup-view-input { width: 104px; }
+.sup-view-rename-form .sup-view-save { padding: 3px 8px; }
+.sup-view-note, .sup-view-error {
+  display: inline-flex; align-items: center; gap: 5px; margin: 0;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+}
+.sup-view-note { color: var(--good); }
+.sup-view-note i { font-size: 11px; }
+.sup-view-error { color: var(--alert); text-transform: none; letter-spacing: 0; font-size: 11.5px; }
+.sup-view-error i { font-size: 12px; }
+
+/* ANNULER UN RETRAIT — la pastille revient d'un clic */
+.sup-view-undo {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 4px 5px 4px 10px;
+  border-radius: 999px; min-width: 0; max-width: 100%;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 82%, transparent);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--text) 30%, transparent);
+  animation: sup-toast-in .18s ease-out;
+}
+.sup-view-undo > i { flex: 0 0 auto; font-size: 12px; color: var(--alert); }
+.sup-view-undo-text {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sup-view-undo-btn {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent2);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, background .18s ease-out, border-color .18s ease-out;
+}
+.sup-view-undo-btn i { font-size: 11px; }
+.sup-view-undo-btn:hover {
+  color: var(--bg); background: var(--accent); border-color: var(--accent);
+}
+
+/* REMETTRE LES COMPTEURS À ZÉRO — les vues restent, l'usage repart de zéro */
+.sup-view-reset {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--text) 26%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-view-reset i { font-size: 12px; color: var(--accent2); }
+.sup-view-reset:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.sup-view-reset:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+/* L'offre d'annulation des compteurs — même rangée, autre raison */
+.sup-view-undo.is-recall > i { color: var(--accent2); }
+
+/* EXPORTER LES VUES — la liste entière dans un fichier */
+.sup-view-export {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--text) 26%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-view-export i { font-size: 12px; color: var(--accent2); }
+.sup-view-export:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.sup-view-export:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+/* LE COMPTEUR GLOBAL — le total des rappels de toutes les vues */
+.sup-view-total {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+  white-space: nowrap; cursor: default;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 74%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+}
+.sup-view-total i { font-size: 12px; color: var(--accent2); }
+.sup-view-total b {
+  font-family: var(--font-heading); font-size: 12px; font-weight: 600;
+  letter-spacing: -.01em; font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--text) 92%, transparent);
+}
+.sup-view-total.is-on {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  color: color-mix(in srgb, var(--accent) 86%, var(--text));
+}
+.sup-view-total.is-on i { color: var(--accent); }
+.sup-view-total.is-on b { color: var(--accent); }
+
+/* L'ORDRE DE LA RANGÉE — l'enregistrement, ou la vue la plus rappelée */
+.sup-view-order, .sup-view-pinall, .sup-view-ignorepin {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--text) 26%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-view-order i, .sup-view-pinall i, .sup-view-ignorepin i { font-size: 12px; color: var(--accent2); }
+.sup-view-order:hover, .sup-view-pinall:hover, .sup-view-ignorepin:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.sup-view-order.is-on, .sup-view-pinall.is-on, .sup-view-ignorepin.is-on {
+  border-style: solid;
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  border-color: color-mix(in srgb, var(--accent) 52%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.sup-view-order.is-on i, .sup-view-pinall.is-on i, .sup-view-ignorepin.is-on i { color: var(--accent); }
+.sup-view-order:focus-visible, .sup-view-pinall:focus-visible, .sup-view-ignorepin:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+/* TOUT RETIRER — les pastilles partent ensemble, l'annulation les ramène */
+.sup-view-clear {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--alert) 42%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 74%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-view-clear i { font-size: 12px; color: var(--alert); }
+.sup-view-clear:hover {
+  color: var(--alert); border-color: color-mix(in srgb, var(--alert) 68%, transparent);
+  background: color-mix(in srgb, var(--alert) 11%, transparent);
+}
+.sup-view-clear:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--alert) 72%, transparent); outline-offset: 2px;
+}
+
+/* PARTIR D'UNE VUE EXISTANTE — le choix se fait sous le champ, sans le quitter */
+.sup-view-bases {
+  display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; min-width: 0;
+}
+.sup-view-bases-lab {
+  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 58%, transparent);
+}
+.sup-view-bases-lab i { font-size: 11px; color: var(--accent2); }
+.sup-view-base {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 190px;
+  padding: 4px 9px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 76%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .07em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-view-base i { flex: 0 0 auto; font-size: 10px; color: var(--accent2); }
+.sup-view-base:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 52%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+.sup-view-base.is-on {
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.sup-view-base:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+.sup-view-base-note {
+  display: inline-flex; align-items: center; gap: 4px; min-width: 0;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .06em;
+  color: color-mix(in srgb, var(--good) 84%, var(--text));
+}
+.sup-view-base-note i { font-size: 11px; }
+
+/* IMPORTER / EXPORTER — les deux tiennent la même rangée */
+.sup-view-io { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.sup-view-file {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* DÉPOSER UN FICHIER DE VUES SUR LA BARRE — l'invite couvre la rangée */
+.sup-view-drop {
+  position: absolute; inset: -1px; z-index: 8; margin: 0;
+  display: flex; align-items: center; justify-content: center; gap: 7px; flex-wrap: wrap;
+  padding: 10px 16px; border-radius: 16px; text-align: center;
+  border: 2px dashed color-mix(in srgb, var(--accent) 60%, transparent);
+  background: color-mix(in srgb, var(--surface) 95%, transparent);
+  backdrop-filter: blur(2px); pointer-events: none;
+  animation: sup-fade .14s ease-out;
+}
+.sup-view-drop i { font-size: 18px; color: var(--accent); }
+.sup-view-drop b { font-size: 12.5px; letter-spacing: -.01em; }
+.sup-view-drop span {
+  font-size: 11px; line-height: 1.45;
+  color: color-mix(in srgb, var(--text) 72%, transparent);
+}
+
+/* L'APERÇU AVANT IMPORT — ce que le fichier changerait, ligne par ligne */
+.sup-view-preview {
+  display: grid; gap: 6px; width: 100%; max-width: 620px; margin-top: 4px;
+  padding: 9px 11px; border-radius: 12px;
+  border: 1px dashed color-mix(in srgb, var(--accent) 44%, transparent);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  animation: sup-toast-in .18s ease-out;
+}
+.sup-view-preview-head { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.sup-view-preview-title {
+  display: inline-flex; align-items: center; gap: 5px; min-width: 0;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 88%, transparent);
+  overflow-wrap: anywhere;
+}
+.sup-view-preview-title i { flex: 0 0 auto; font-size: 12px; color: var(--accent); }
+.sup-view-preview-counts {
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .06em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 64%, transparent);
+}
+.sup-view-preview-x {
+  margin-left: auto; display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 0 auto; width: 18px; height: 18px; border: 0; border-radius: 50%;
+  background: transparent; cursor: pointer; color: var(--muted); font-size: 11px;
+  transition: color .18s ease-out, background .18s ease-out;
+}
+.sup-view-preview-x:hover { color: var(--alert); background: color-mix(in srgb, var(--alert) 14%, transparent); }
+.sup-view-preview-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+.sup-view-preview-hint {
+  margin: 0; font-size: 10.5px; line-height: 1.45;
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+}
+.sup-view-preview-list {
+  display: grid; gap: 2px; margin: 0; padding: 0; list-style: none;
+  max-height: 196px; overflow-y: auto;
+}
+.sup-view-preview-row {
+  display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; min-width: 0;
+  padding: 4px 0; border-top: 1px dashed color-mix(in srgb, var(--text) 12%, transparent);
+  font-size: 10.5px; line-height: 1.4;
+}
+.sup-view-preview-row:first-child { border-top: 0; }
+.sup-view-preview-name {
+  min-width: 0; font-weight: 600; color: color-mix(in srgb, var(--text) 94%, transparent);
+  overflow-wrap: anywhere;
+}
+.sup-view-preview-tag {
+  flex: 0 0 auto; padding: 1px 6px; border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 7px; letter-spacing: .07em; text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--text) 24%, transparent);
+  color: color-mix(in srgb, var(--text) 76%, transparent);
+}
+.sup-view-preview-row.is-new .sup-view-preview-tag {
+  border-color: color-mix(in srgb, var(--accent) 52%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: color-mix(in srgb, var(--accent) 90%, var(--text));
+}
+.sup-view-preview-row.is-update .sup-view-preview-tag {
+  border-color: color-mix(in srgb, var(--accent2) 52%, transparent);
+  background: color-mix(in srgb, var(--accent2) 12%, transparent);
+  color: color-mix(in srgb, var(--accent2) 90%, var(--text));
+}
+.sup-view-preview-row.is-full .sup-view-preview-tag {
+  border-color: color-mix(in srgb, var(--alert) 52%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+  color: var(--alert);
+}
+.sup-view-preview-row.is-same { opacity: .74; }
+.sup-view-preview-pin { flex: 0 0 auto; font-size: 9px; color: var(--accent2); }
+.sup-view-preview-meta { font-size: 10px; color: color-mix(in srgb, var(--text) 62%, transparent); }
+.sup-view-preview-meta.is-full { color: var(--alert); }
+.sup-view-preview-changes { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.sup-view-preview-changes em {
+  font-style: normal; padding: 1px 6px; border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .05em;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: color-mix(in srgb, var(--text) 88%, transparent);
+}
+.sup-view-preview-order {
+  display: inline-flex; align-items: center; gap: 5px; margin: 0;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .06em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 66%, transparent);
+}
+.sup-view-preview-order i { font-size: 11px; color: var(--accent2); }
+.sup-view-preview-actions { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+
+/* LA SAUVEGARDE COMPLÈTE RELUE — les fiches, les vues et les seuils, comptés */
+.sup-view-preview.sup-carnet-preview { max-width: 660px; }
+.sup-carnet-fiches {
+  display: flex; align-items: center; gap: 6px; margin: 0; padding: 5px 9px;
+  border-radius: 9px; min-width: 0; font-size: 11px; line-height: 1.45;
+  font-weight: 600; overflow-wrap: anywhere;
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+}
+.sup-carnet-fiches i { flex: 0 0 auto; font-size: 13px; color: var(--accent); }
+.sup-carnet-settings {
+  display: grid; gap: 3px; margin: 0; padding: 0; list-style: none;
+}
+.sup-carnet-settings li {
+  display: flex; align-items: center; gap: 5px; min-width: 0;
+  font-size: 10.5px; line-height: 1.45; overflow-wrap: anywhere;
+  color: color-mix(in srgb, var(--text) 82%, transparent);
+}
+.sup-carnet-settings i { flex: 0 0 auto; font-size: 11px; color: var(--accent2); }
+.sup-view-preview-cancel {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--text) 26%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-view-preview-cancel:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--alert) 55%, transparent);
+  background: color-mix(in srgb, var(--alert) 10%, transparent);
+}
+.sup-view-preview-cancel:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+/* LE RANG RÉEL DANS LA BULLE — la place véritable quand l'épinglage est ignoré */
+.sup-view-tip-rank-pin {
+  margin-left: 5px; padding: 1px 6px; border-radius: 999px;
+  font-family: var(--font-label); font-size: 7px; font-weight: 500; letter-spacing: .06em;
+  text-transform: uppercase; white-space: nowrap;
+  background: color-mix(in srgb, var(--accent2) 16%, transparent);
+  color: color-mix(in srgb, var(--accent2) 90%, var(--text));
+}
+
+/* LE RACCOURCI — Alt + flèches passe d'une pastille à l'autre */
+.sup-view-keys {
+  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .06em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+}
+.sup-view-keys kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 15px; height: 15px; padding: 0 3px; border-radius: 4px;
+  font-family: var(--font-label); font-size: 8px; line-height: 1;
+  color: color-mix(in srgb, var(--text) 82%, transparent);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
+}
+
+/* LA BULLE — les réglages de la pastille, au survol et au clavier */
+.sup-view-tip {
+  position: fixed; z-index: 140;
+  transform: translate(-50%, calc(-100% - 8px));
+  display: grid; gap: 5px; width: max-content; max-width: 260px; padding: 9px 11px;
+  border-radius: 12px; pointer-events: auto;
+  background: color-mix(in srgb, var(--surface) 98%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 24px 44px -30px rgba(0, 0, 0, .92);
+  animation: sup-tip-in .14s ease-out;
+}
+.sup-view-tip::after {
+  content: ''; position: absolute; left: 50%; bottom: -5px; width: 8px; height: 8px;
+  transform: translateX(-50%) rotate(45deg);
+  background: color-mix(in srgb, var(--surface) 98%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.sup-view-tip-name {
+  display: inline-flex; align-items: center; gap: 5px; min-width: 0;
+  font-family: var(--font-heading); font-size: 11.5px; font-weight: 600; letter-spacing: -.01em;
+  color: color-mix(in srgb, var(--text) 94%, transparent);
+  overflow-wrap: anywhere;
+}
+.sup-view-tip-name i { font-size: 11px; color: var(--accent); }
+.sup-view-tip-row {
+  display: flex; align-items: baseline; gap: 6px; min-width: 0;
+  font-size: 10.5px; line-height: 1.4; color: color-mix(in srgb, var(--text) 86%, transparent);
+}
+.sup-view-tip-row > i { flex: 0 0 auto; font-size: 11px; color: var(--accent2); align-self: center; }
+.sup-view-tip-row > em {
+  flex: 0 0 auto; font-style: normal;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+}
+.sup-view-tip-row > span { min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+/* Les deux chiffres de la vue, sous ses réglages */
+.sup-view-tip-row.is-tally { border-top: 1px dashed color-mix(in srgb, var(--text) 18%, transparent); padding-top: 4px; }
+.sup-view-tip-row.is-tally > span { font-weight: 600; color: color-mix(in srgb, var(--text) 92%, transparent); }
+/* LE RACCOURCI DANS LA BULLE — la touche qui repose cette vue directement */
+.sup-view-tip-row.is-keys { align-items: center; }
+.sup-view-tip-kbd {
+  display: inline-flex; align-items: center; gap: 3px; min-width: 0; flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
+}
+.sup-view-tip-kbd kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 15px; height: 15px; padding: 0 3px; border-radius: 4px;
+  font-family: var(--font-label); font-size: 8px; line-height: 1;
+  color: color-mix(in srgb, var(--text) 88%, transparent);
+  background: color-mix(in srgb, var(--text) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 24%, transparent);
+}
+/* LA PLUS RAPPELÉE D'ABORD — la rangée entière, lue dans la bulle */
+.sup-view-tip-rank {
+  display: grid; gap: 3px; margin-top: 1px; padding-top: 5px;
+  border-top: 1px dashed color-mix(in srgb, var(--text) 18%, transparent);
+}
+.sup-view-tip-rank-head {
+  display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 64%, transparent);
+}
+.sup-view-tip-rank-head i { flex: 0 0 auto; font-size: 11px; color: var(--accent2); }
+.sup-view-tip-rank-list { display: grid; gap: 1px; min-width: 0; }
+.sup-view-tip-rank-item {
+  display: flex; align-items: baseline; gap: 5px; width: 100%; min-width: 0;
+  margin: 0 -4px; padding: 1px 4px; border: 0; border-radius: 6px;
+  background: transparent; cursor: pointer; text-align: left;
+  font-family: var(--font-body); font-size: 10px; line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+  transition: color .15s ease-out, background .15s ease-out;
+}
+.sup-view-tip-rank-item:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.sup-view-tip-rank-item:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 1px;
+}
+/* La bulle dit que ses lignes se cliquent */
+.sup-view-tip-rank-note {
+  font-style: normal; text-transform: none; letter-spacing: 0;
+  font-size: 8px; color: color-mix(in srgb, var(--text) 52%, transparent);
+}
+.sup-view-tip-rank-item > b {
+  flex: 0 0 auto; min-width: 10px; font-weight: 600; font-size: 9px;
+  color: color-mix(in srgb, var(--text) 52%, transparent);
+}
+.sup-view-tip-rank-name {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sup-view-tip-rank-count {
+  flex: 0 0 auto; margin-left: auto; padding-left: 6px; font-size: 9px;
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+}
+.sup-view-tip-rank-item.is-on { color: color-mix(in srgb, var(--accent) 90%, var(--text)); }
+.sup-view-tip-rank-item.is-on > b,
+.sup-view-tip-rank-item.is-on .sup-view-tip-rank-count { color: var(--accent); }
+
+@keyframes sup-tip-in {
+  from { opacity: 0; transform: translate(-50%, calc(-100% - 2px)); }
+  to { opacity: 1; transform: translate(-50%, calc(-100% - 8px)); }
+}
+
+/* LA VUE CHANGÉE AU CLAVIER — le retour, effacé seul */
+.sup-view-cycle {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 5px 11px;
+  border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 84%, transparent);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 24%, transparent);
+  animation: sup-toast-in .18s ease-out;
+}
+.sup-view-cycle i { font-size: 12px; color: var(--accent2); }
+
+/* LA VUE REPOSÉE — le carnet se rouvre sur la dernière liste rappelée */
+.sup-view-restored {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 5px 6px 5px 10px;
+  border-radius: 999px; white-space: nowrap; max-width: 100%; min-width: 0;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent2) 92%, var(--text));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+}
+.sup-view-restored > i { flex: 0 0 auto; font-size: 12px; }
+.sup-view-restored > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.sup-view-restored-x {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; color: inherit; font-size: 12px;
+}
+.sup-view-restored-x:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.sup-view-restored-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+/* LE COMPTEUR PAR PAYS — où sont vraiment les fournisseurs */
+.sup-tally {
+  display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin: 0 0 12px;
+}
+.sup-tally-lab {
+  display: inline-flex; align-items: center; gap: 5px; margin-right: 2px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .09em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+}
+.sup-tally-lab i { font-size: 12px; color: var(--accent); }
+.sup-tally-pill {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px;
+  white-space: nowrap; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-tally-pill:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 48%, transparent);
+}
+.sup-tally-pill.is-on {
+  color: var(--bg); background: var(--accent); border-color: var(--accent);
+}
+.sup-tally-pill.is-static {
+  cursor: default; border-style: dashed;
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+}
+.sup-tally-pill.is-static:hover {
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+  border-color: color-mix(in srgb, var(--text) 16%, transparent);
+}
+.sup-tally-count {
+  padding: 0 4px; border-radius: 999px; font-size: 8px; line-height: 1.6;
+  background: color-mix(in srgb, var(--text) 12%, transparent);
+}
+.sup-tally-pill.is-on .sup-tally-count {
+  color: var(--bg); background: color-mix(in srgb, var(--bg) 26%, transparent);
+}
+.sup-tally-pill:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+/* LE RÉSUMÉ — la liste affichée, en un bloc prêt pour WhatsApp */
+.sup-list-head {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0 10px;
+}
+.sup-list-head .sup-count { margin: 0; }
+.sup-summary {
+  display: inline-flex; align-items: center; gap: 5px; margin-left: auto;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--text) 26%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-summary i { font-size: 12px; color: var(--accent2); }
+.sup-summary:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.sup-summary.is-done {
+  color: var(--good); border-style: solid;
+  border-color: color-mix(in srgb, var(--good) 50%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent);
+}
+.sup-summary.is-done i { color: var(--good); }
+.sup-summary.is-fail {
+  color: var(--alert); border-style: solid;
+  border-color: color-mix(in srgb, var(--alert) 50%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+}
+.sup-summary.is-fail i { color: var(--alert); }
+.sup-summary:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+.sup-count {
+  margin: 14px 0 10px; font-family: var(--font-label); font-size: 9px; letter-spacing: .1em;
+  text-transform: uppercase; color: color-mix(in srgb, var(--text) 68%, transparent);
+}
+
+/* LA LISTE */
+.sup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+
+.sup-card {
+  position: relative; display: grid; gap: 10px; padding: 16px 16px 13px; min-width: 0;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--text) 13%, transparent);
+  transition: border-color .22s ease-out, transform .22s ease-out, box-shadow .22s ease-out;
+}
+.sup-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  box-shadow: 0 24px 48px -40px rgba(0, 0, 0, .9);
+}
+.sup-card.is-due {
+  border-color: color-mix(in srgb, var(--accent) 44%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--accent) 72%, transparent);
+}
+/* LA FICHE SÉLECTIONNÉE AU CLAVIER — celle que Alt + Suppr vise */
+.sup-card.is-selected {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 48%, transparent),
+    0 24px 48px -40px rgba(0, 0, 0, .9);
+}
+
+/* RETIRER LA FICHE SÉLECTIONNÉE — la confirmation, avant tout retrait */
+.sup-del-confirm {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: 0 0 12px; padding: 8px 10px; border-radius: 12px;
+  background: color-mix(in srgb, var(--alert) 11%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--alert) 52%, transparent);
+  animation: sup-toast-in .18s ease-out;
+}
+.sup-del-confirm > i { flex: 0 0 auto; font-size: 15px; color: var(--alert); }
+.sup-del-confirm-text {
+  min-width: 0; font-size: 12px; line-height: 1.45; overflow-wrap: anywhere;
+  color: color-mix(in srgb, var(--text) 92%, transparent);
+}
+.sup-del-confirm-keys {
+  display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 66%, transparent);
+}
+.sup-del-confirm-keys kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; padding: 1px 4px; border-radius: 4px;
+  font-family: var(--font-label); font-size: 8px; line-height: 1.5;
+  border: 1px solid color-mix(in srgb, var(--text) 24%, transparent);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+}
+.sup-del-confirm-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+
+/* REVENIR SUR UN RETRAIT AU CLAVIER — l'offre d'annulation sous la liste */
+.sup-del-undo {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: 0 0 12px; padding: 7px 10px; border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  animation: sup-toast-in .18s ease-out;
+}
+.sup-del-undo > i { flex: 0 0 auto; font-size: 14px; color: var(--accent2); }
+.sup-del-undo-text {
+  min-width: 0; font-size: 12px; line-height: 1.45; overflow-wrap: anywhere;
+  color: color-mix(in srgb, var(--text) 88%, transparent);
+}
+.sup-del-undo-btn {
+  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  margin-left: auto; padding: 3px 9px; border-radius: 999px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--accent) 52%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+  transition: background .18s ease-out, border-color .18s ease-out;
+}
+.sup-del-undo-btn i { font-size: 11px; }
+.sup-del-undo-btn:hover {
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 72%, transparent);
+}
+.sup-del-undo-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+.sup-del-undo-x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; color: color-mix(in srgb, var(--text) 52%, transparent); font-size: 12px;
+}
+.sup-del-undo-x:hover { color: var(--text); background: color-mix(in srgb, var(--text) 10%, transparent); }
+
+.sup-head { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
+.sup-ava {
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 11px;
+  font-family: var(--font-heading); font-size: 13px; font-weight: 600; letter-spacing: .02em;
+  color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.sup-ava i { font-size: 17px; }
+.sup-id { display: grid; gap: 2px; min-width: 0; }
+.sup-id h3 {
+  margin: 0; font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.sup-country {
+  display: inline-flex; align-items: center; gap: 4px; margin: 0;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+}
+.sup-country i { font-size: 11px; color: var(--accent2); }
+.sup-flags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; margin-left: auto; }
+.sup-flag {
+  display: inline-flex; align-items: center; gap: 3px; padding: 3px 7px; border-radius: 999px;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .08em; text-transform: uppercase;
+  white-space: nowrap; border: 1px solid transparent;
+}
+.sup-flag i { font-size: 10px; }
+.sup-flag.is-due {
+  color: var(--accent2); background: color-mix(in srgb, var(--accent) 13%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+}
+.sup-flag.is-slow {
+  color: color-mix(in srgb, var(--text) 84%, transparent);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  border-color: color-mix(in srgb, var(--text) 30%, transparent);
+  border-style: dashed;
+}
+.sup-flag.is-slow i { color: var(--accent2); }
+.sup-flag.is-todo {
+  color: color-mix(in srgb, var(--text) 66%, transparent);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  border-color: color-mix(in srgb, var(--text) 22%, transparent);
+}
+
+.sup-mail {
+  display: inline-flex; align-items: center; gap: 6px; min-width: 0; text-decoration: none;
+  font-size: 12px; color: var(--accent2); overflow-wrap: anywhere;
+}
+.sup-mail span { min-width: 0; overflow-wrap: anywhere; }
+.sup-mail i { flex: 0 0 auto; font-size: 13px; }
+.sup-mail:hover span { text-decoration: underline; }
+.sup-mail.is-empty { color: color-mix(in srgb, var(--text) 56%, transparent); }
+.sup-mail.is-empty i { color: inherit; }
+.sup-mail:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent); outline-offset: 2px; }
+
+/* L'ADRESSE ET SA COPIE — pour la coller dans Alibaba ou WhatsApp */
+.sup-contact { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.sup-contact .sup-mail { min-width: 0; }
+.sup-copy {
+  display: inline-flex; align-items: center; gap: 4px; margin-left: auto; flex: 0 0 auto;
+  padding: 4px 9px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px dashed color-mix(in srgb, var(--text) 28%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 76%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-copy i { font-size: 11px; }
+.sup-copy:hover:not(:disabled) {
+  color: var(--accent2); border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.sup-copy.is-done {
+  color: var(--good); border-color: color-mix(in srgb, var(--good) 52%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); border-style: solid;
+}
+.sup-copy.is-fail {
+  color: var(--alert); border-color: color-mix(in srgb, var(--alert) 52%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); border-style: solid;
+}
+.sup-copy:disabled { opacity: .4; cursor: not-allowed; }
+.sup-copy:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+.sup-stats {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+  padding: 9px 0 3px; border-top: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+}
+.sup-stats > div { display: grid; gap: 2px; min-width: 0; }
+.sup-stats span {
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sup-stats b {
+  font-size: 13.5px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap;
+  font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--text) 94%, transparent);
+}
+
+.sup-linked { display: grid; gap: 5px; min-width: 0; }
+.sup-linked-lab {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+}
+.sup-linked-lab i { font-size: 11px; color: var(--accent); }
+.sup-linked-none {
+  font-size: 11.5px; color: color-mix(in srgb, var(--text) 62%, transparent);
+}
+.sup-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 0; padding: 0; list-style: none; }
+.sup-chips li {
+  padding: 3px 8px; border-radius: 999px; max-width: 100%; min-width: 0;
+  font-size: 10.5px; line-height: 1.5; overflow-wrap: anywhere;
+  color: color-mix(in srgb, var(--text) 88%, transparent);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+}
+
+.sup-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  margin-top: 2px; padding-top: 9px;
+  border-top: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+}
+.sup-last {
+  display: inline-flex; align-items: center; gap: 5px; margin: 0; min-width: 0;
+  font-size: 10.5px; line-height: 1.5; color: color-mix(in srgb, var(--text) 68%, transparent);
+}
+.sup-last i { flex: 0 0 auto; font-size: 12px; color: var(--accent2); }
+.sup-actions { display: flex; align-items: center; gap: 4px; margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
+/* ÉCRIRE — le message type du sourcing, ouvert dans la messagerie */
+.sup-write {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap; text-decoration: none;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+  transition: color .18s ease-out, background .18s ease-out, border-color .18s ease-out;
+}
+.sup-write i { font-size: 12px; }
+.sup-write:hover {
+  color: var(--bg); background: var(--accent); border-color: var(--accent);
+}
+.sup-write:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+.sup-write.is-off {
+  cursor: not-allowed; opacity: .5;
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--text) 22%, transparent);
+}
+.sup-write.is-off:hover {
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--text) 22%, transparent);
+}
+.sup-icon-btn {
+  display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+  border-radius: 8px; cursor: pointer; font-size: 13px;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 76%, transparent);
+  transition: color .18s ease-out, border-color .18s ease-out, background .18s ease-out;
+}
+.sup-icon-btn i { font-size: 13px; }
+.sup-icon-btn:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 11%, transparent);
+}
+.sup-icon-btn.is-on {
+  color: var(--accent); border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.sup-icon-btn.is-danger:hover {
+  color: var(--alert); border-color: color-mix(in srgb, var(--alert) 60%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+}
+.sup-icon-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+.sup-confirm {
+  display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-left: auto;
+  font-size: 11px; color: color-mix(in srgb, var(--text) 74%, transparent);
+}
+.sup-mini {
+  padding: 4px 9px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 82%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+}
+.sup-mini:hover { color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+.sup-mini.is-danger {
+  color: var(--alert); border-color: color-mix(in srgb, var(--alert) 55%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+}
+.sup-mini:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent); outline-offset: 2px;
+}
+
+.sup-note {
+  margin: 0; padding: 7px 9px; border-radius: 9px; font-size: 11px; line-height: 1.55;
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border-left: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+/* VIDE ET SANS RÉSULTAT */
+.sup-empty {
+  display: grid; justify-items: center; gap: 8px; margin-top: 16px; padding: 40px 20px;
+  border-radius: 18px; text-align: center;
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--text) 22%, transparent);
+}
+.sup-empty > i { font-size: 26px; color: var(--accent); }
+.sup-empty h3 { margin: 0; font-size: 17px; letter-spacing: -.015em; }
+.sup-empty p { margin: 0; max-width: 46ch; font-size: 13px; line-height: 1.6; color: color-mix(in srgb, var(--text) 76%, transparent); }
+.sup-empty-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.sup-empty-line {
+  display: inline-flex; align-items: center; gap: 7px; margin: 18px 0 0; font-size: 13px;
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+}
+.sup-empty-line i { font-size: 15px; color: var(--accent); }
+
+.btn.sup-btn-ghost {
+  background: transparent; color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--text) 26%, transparent);
+}
+.btn.sup-btn-ghost:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.btn.sup-btn-ghost:disabled { opacity: .45; cursor: not-allowed; }
+
+/* LA FICHE, EN BOÎTE */
+.sup-dialog-wrap {
+  position: fixed; inset: 0; z-index: 120; display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: color-mix(in srgb, #05090d 62%, transparent);
+  backdrop-filter: blur(6px); animation: sup-fade .16s ease-out;
+}
+@keyframes sup-fade { from { opacity: 0; } to { opacity: 1; } }
+.sup-dialog {
+  width: min(620px, 100%); max-height: min(86vh, 760px); overflow-y: auto;
+  display: grid; gap: 12px; padding: 18px; border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 98%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  box-shadow: 0 40px 80px -50px rgba(0, 0, 0, .95);
+}
+.sup-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sup-dialog-head h2 {
+  display: inline-flex; align-items: center; gap: 8px; margin: 0;
+  font-size: 17px; letter-spacing: -.02em;
+}
+.sup-dialog-head h2 i { font-size: 17px; color: var(--accent); }
+.sup-x {
+  display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+  border: 0; border-radius: 50%; background: transparent; color: var(--muted);
+  font-size: 15px; cursor: pointer;
+}
+.sup-x:hover { background: color-mix(in srgb, var(--text) 12%, transparent); color: var(--text); }
+
+.sup-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; }
+.sup-field { display: grid; gap: 4px; min-width: 0; }
+.sup-field.is-wide { grid-column: 1 / -1; }
+.sup-field > label, .sup-field-lab {
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .11em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+}
+.sup-input {
+  box-sizing: border-box; width: 100%; min-width: 0; height: 34px; padding: 0 10px;
+  border-radius: 9px; outline: 0;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  color: var(--text); font-family: var(--font-body); font-size: 13px;
+  transition: border-color .2s ease-out, background .2s ease-out;
+}
+.sup-textarea { height: auto; padding: 8px 10px; line-height: 1.5; resize: vertical; min-height: 54px; }
+.sup-input::placeholder { color: color-mix(in srgb, var(--text) 45%, transparent); }
+.sup-input:focus {
+  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.sup-char-count {
+  justify-self: end; margin: 0; font-family: var(--font-label); font-size: 7.5px;
+  letter-spacing: .08em; color: color-mix(in srgb, var(--text) 58%, transparent);
+}
+.sup-field-note { margin: 0; font-size: 11.5px; color: color-mix(in srgb, var(--text) 70%, transparent); }
+.sup-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.sup-pick {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
+  cursor: pointer; white-space: nowrap; font-size: 11.5px;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  background: transparent; color: color-mix(in srgb, var(--text) 76%, transparent);
+  transition: border-color .2s ease-out, background .2s ease-out, color .2s ease-out;
+}
+.sup-pick i { font-size: 12px; color: var(--accent2); }
+.sup-pick:hover { border-color: color-mix(in srgb, var(--accent) 52%, transparent); color: var(--text); }
+.sup-pick.is-on {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+}
+.sup-pick.is-on i { color: var(--accent); }
+.sup-pick:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent); outline-offset: 2px; }
+.sup-form-error {
+  grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 6px; margin: 0;
+  font-size: 11.5px; color: var(--alert);
+}
+.sup-form-actions {
+  grid-column: 1 / -1; display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  margin-top: 2px;
+}
+
+/* THÈME CLAIR — même plancher de contraste que les autres pages de travail */
+.dash-page[data-dash-skin="light"] { --muted: #46535f; }
+.dash-page[data-dash-skin="light"] :is(
+  .sup-stats span,
+  .sup-linked-lab,
+  .sup-country,
+  .sup-count,
+  .sup-filter,
+  .sup-link,
+  .sup-summary,
+  .sup-pull,
+  .sup-sort-lab,
+  .sup-sort-btn,
+  .sup-tally-lab,
+  .sup-tally-pill,
+  .sup-view-apply,
+  .sup-view-pin,
+  .sup-view-keep,
+  .sup-view-export,
+  .sup-view-order,
+  .sup-view-pinall,
+  .sup-view-ignorepin,
+  .sup-view-total,
+  .sup-view-reset,
+  .sup-lead-lab,
+  .sup-lead-preset,
+  .sup-lead-unit,
+  .sup-lead-go,
+  .sup-field > label,
+  .sup-field-lab
+) { color: color-mix(in srgb, var(--text) 74%, transparent); }
+
+.dash-page[data-dash-skin="light"] :is(
+  .sup-last,
+  .sup-note,
+  .sup-mail.is-empty,
+  .sup-linked-none,
+  .sup-empty p,
+  .sup-field-note,
+  .sup-confirm
+) { color: color-mix(in srgb, var(--text) 82%, transparent); }
+
+.dash-page[data-dash-skin="light"] :is(.sup-card, .sup-tools, .sup-chips li, .sup-stat) {
+  border-color: color-mix(in srgb, var(--text) 18%, transparent);
+}
+.dash-page[data-dash-skin="light"] .sup-card { backdrop-filter: none; }
+.dash-page[data-dash-skin="light"] .sup-card,
+.dash-page[data-dash-skin="light"] .sup-tools,
+.dash-page[data-dash-skin="light"] .sup-empty {
+  background: color-mix(in srgb, var(--surface) 92%, #fff);
+}
+
+@media (max-width: 960px) {
+  .sup-hero { grid-template-columns: minmax(0, 1fr); }
+  .sup-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .sup-form { grid-template-columns: minmax(0, 1fr); }
+  .sup-tools { padding: 9px; }
+  .sup-pull { margin-left: 0; }
+  .sup-sort { width: 100%; }
+  .sup-lead { width: 100%; justify-content: space-between; }
+  .sup-link { flex: 1 1 auto; justify-content: center; }
+  .sup-views { width: 100%; }
+  .sup-view-keep { flex: 1 1 auto; justify-content: center; }
+  .sup-view-form { flex: 1 1 auto; }
+  .sup-view-input { flex: 1 1 auto; width: auto; }
+  .sup-view-rename-form { flex: 1 1 auto; }
+  .sup-view-rename-form .sup-view-input { flex: 1 1 auto; width: auto; }
+  .sup-view-restored { white-space: normal; flex: 1 1 auto; }
+  .sup-view-undo { white-space: normal; flex: 1 1 auto; }
+  .sup-view-io { flex: 1 1 auto; }
+  .sup-view-preview { max-width: 100%; }
+  .sup-view-keys { display: none; }
+  .sup-view-bases { width: 100%; }
+  .sup-view-base { max-width: 100%; }
+  .sup-view-cycle { white-space: normal; flex: 1 1 auto; }
+  .sup-view-tip { max-width: 220px; }
+  .sup-tally { margin-bottom: 10px; }
+  .sup-list-head { gap: 8px; }
+  .sup-summary { margin-left: 0; }
+  .sup-lead-note { white-space: normal; }
+  .sup-slow { white-space: normal; }
+  .sup-grid { grid-template-columns: 1fr; }
+  .sup-dialog { padding: 14px; }
+  .sup-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

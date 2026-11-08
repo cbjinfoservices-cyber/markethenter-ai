@@ -1,0 +1,64 @@
+/* COLOUR PANELS — A SMALL PALETTE BUTTON, BOTTOM-LEFT OF EVERY PAGE */
+.pal-wrap { position: fixed; left: clamp(14px, 3vw, 32px); bottom: clamp(14px, 3vw, 32px); z-index: 90; }
+
+.pal-btn { display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 13px 0 10px;
+  border-radius: 12px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  background: color-mix(in srgb, var(--surface) 72%, transparent); backdrop-filter: blur(12px);
+  color: var(--accent2); font-family: var(--font-label); font-size: 9.5px; letter-spacing: .1em;
+  text-transform: uppercase; white-space: nowrap;
+  transition: background .22s ease-out, color .22s ease-out, border-color .22s ease-out; }
+.pal-btn i { font-size: 16px; }
+.pal-btn:hover, .pal-btn.is-open { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.pal-btn:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 78%, transparent); outline-offset: 3px; }
+@media (max-width: 780px) {
+  .pal-btn { height: 36px; padding: 0 10px; }
+  .pal-btn span { display: none; }
+}
+
+.pal-panel { position: absolute; left: 0; bottom: calc(100% + 10px); width: 282px; display: grid; gap: 9px;
+  padding: 14px; border-radius: 16px; z-index: 91;
+  background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  box-shadow: 0 28px 60px -34px rgba(0, 0, 0, .95);
+  animation: pal-in .16s ease-out; }
+@keyframes pal-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.pal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.pal-title { display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent2); }
+.pal-title i { font-size: 13px; color: var(--accent); }
+.pal-close { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;
+  border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 15px; cursor: pointer;
+  transition: background .2s ease-out, color .2s ease-out; }
+.pal-close:hover { background: color-mix(in srgb, var(--text) 12%, transparent); color: var(--text); }
+.pal-intro { margin: 0; font-size: 11.5px; line-height: 1.5;
+  color: color-mix(in srgb, var(--text) 62%, transparent); }
+
+.pal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.pal-item { position: relative; display: flex; align-items: center; gap: 8px; min-width: 0; padding: 8px 9px;
+  border-radius: 11px; cursor: pointer; text-align: left;
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 13%, transparent);
+  color: color-mix(in srgb, var(--text) 84%, transparent); font-family: var(--font-body); font-size: 12px;
+  transition: border-color .2s ease-out, background .2s ease-out, transform .2s ease-out; }
+.pal-item:hover { transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+.pal-item.is-on { border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--text); }
+.pal-item:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 75%, transparent); outline-offset: 2px; }
+.pal-dots { display: inline-flex; flex: 0 0 auto; }
+.pal-dots i { display: block; width: 11px; height: 11px; border-radius: 50%; margin-left: -2px;
+  border: 1px solid color-mix(in srgb, var(--text) 22%, transparent); }
+.pal-dots i:first-child { margin-left: 0; }
+.pal-name { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pal-check { margin-left: auto; flex: 0 0 auto; font-size: 13px; color: var(--accent); }
+
+.pal-note { display: flex; align-items: flex-start; gap: 5px; margin: 0; padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--text) 11%, transparent);
+  font-family: var(--font-label); font-size: 8.5px; line-height: 1.5; letter-spacing: .04em;
+  color: color-mix(in srgb, var(--text) 45%, transparent); }
+.pal-note i { flex: 0 0 auto; margin-top: 1px; font-size: 11px; color: var(--accent); }
+
+@media print { .pal-wrap { display: none !important; } }

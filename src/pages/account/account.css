@@ -1,0 +1,48 @@
+.account-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 var(--font-body);
+}
+.account-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 24px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+}
+.account-header > a { font-weight: 700; }
+.account-header nav { display: flex; flex-wrap: wrap; gap: 16px; flex: 1; }
+.account-page a { color: var(--accent2); text-decoration: none; }
+.account-page a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.account-main { max-width: 1180px; margin: auto; padding: 32px 20px 72px; }
+.account-main h1 { font-size: 30px; font-weight: 700; margin-bottom: 18px; }
+.account-main h2 { font-size: 20px; font-weight: 600; overflow-wrap: anywhere; }
+.account-main p { margin: 14px 0; }
+.account-panel { background: var(--surface); border: 1px solid color-mix(in srgb, var(--text) 18%, transparent); border-radius: 18px; padding: 24px; }
+.account-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin: 20px 0; }
+.account-main button, .account-main select {
+  border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: var(--text);
+  background: var(--surface);
+  font: inherit;
+}
+.account-main button { cursor: pointer; }
+.account-main button:disabled { opacity: .5; cursor: not-allowed; }
+.account-page :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.account-main [role="alert"] { color: var(--alert); border-left: 4px solid; padding-left: 12px; }
+.account-details div { display: flex; flex-wrap: wrap; gap: 20px; margin: 10px 0; }
+.account-details dt { font-weight: 600; }
+.account-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 24px 0; }
+.account-stats > div { background: var(--surface); border: 1px solid color-mix(in srgb, var(--text) 18%, transparent); border-radius: 18px; padding: 16px; }
+.account-stats dd { font-size: 28px; font-weight: 700; }
+.account-table-wrap { max-width: 100%; overflow-x: auto; }
+.account-table { width: 100%; border-collapse: collapse; background: var(--surface); }
+.account-table caption { text-align: left; font-weight: 700; padding: 12px 0; }
+.account-table td, .account-table th { border: 1px solid color-mix(in srgb, var(--text) 18%, transparent); padding: 12px; text-align: left; vertical-align: top; }
+.account-table th { background: color-mix(in srgb, var(--text) 6%, var(--surface)); }
+.account-table small { display: block; font-size: 11px; color: var(--muted); }

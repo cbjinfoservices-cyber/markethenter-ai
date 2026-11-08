@@ -1,0 +1,39 @@
+.tarifs-hero { grid-template-columns: 1fr; }
+.tarifs-hero .dash-hero-copy { max-width: 760px; }
+
+.tarifs-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 8px; align-items: stretch; }
+
+.tarifs-card { display: flex; flex-direction: column; gap: 14px; padding: 22px 20px 20px; min-width: 0;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 78%, transparent); backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--text) 13%, transparent); }
+.tarifs-card.is-featured { border-color: color-mix(in srgb, var(--accent) 56%, transparent);
+  box-shadow: 0 26px 50px -40px rgba(0, 0, 0, .95); }
+
+.tarifs-card-head { display: grid; gap: 6px; }
+.tarifs-card-head .stamp { margin: 0; }
+.tarifs-price { font-size: 28px; font-weight: 600; letter-spacing: -.02em; }
+.tarifs-price small { font-size: 13px; font-weight: 400; color: color-mix(in srgb, var(--text) 62%, transparent); }
+.tarifs-count { margin: 0; font-size: 12.5px; color: color-mix(in srgb, var(--text) 62%, transparent); }
+
+.tarifs-list-title { margin: 0; font-family: var(--font-label); font-size: 9px; font-weight: 400;
+  letter-spacing: .09em; text-transform: uppercase; color: color-mix(in srgb, var(--text) 56%, transparent); }
+
+.tarifs-modules { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.tarifs-module { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 10px; }
+.tarifs-module .mod-icon { width: 30px; height: 30px; font-size: 15px; border-radius: 10px; }
+.tarifs-module-name { font-size: 13px; line-height: 1.35; }
+.tarifs-module .mod-tag { grid-column: 2; justify-self: start; }
+
+.tarifs-note { display: flex; gap: 8px; margin: 0; font-size: 12.5px; line-height: 1.5;
+  color: color-mix(in srgb, var(--text) 70%, transparent); }
+.tarifs-note i { color: var(--accent); }
+
+.tarifs-cta { margin-top: auto; justify-content: center; }
+
+.tarifs-module .mod-tag.is-limited { color: color-mix(in srgb, var(--text) 70%, transparent);
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  border-color: color-mix(in srgb, var(--text) 22%, transparent); }
+
+@media (max-width: 1100px) { .tarifs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .tarifs-grid { grid-template-columns: 1fr; } }

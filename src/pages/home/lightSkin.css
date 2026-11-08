@@ -1,0 +1,119 @@
+/* ===================================================================
+   THÈME CLAIR — PASSE DE LISIBILITÉ SUR TOUTE LA PAGE D'ACCUEIL
+   Couche posée après film.css : elle ne fait que raffiner le thème clair,
+   sans toucher au film du chapitre ni au thème sombre.
+   =================================================================== */
+
+.home-skin { --veil-base: 66%; }
+
+/* ---------------------------------------------------------------
+   1. LE VOILE DES PHOTOS, DOSÉ PAR LE CURSEUR DES PRÉFÉRENCES
+   Une couche de base uniforme tient le plancher de lisibilité sur toute
+   la section ; le dégradé ne fait que nuancer où la photo respire.
+   --------------------------------------------------------------- */
+.home-skin[data-home-skin="light"] .panel-veil {
+  background:
+    linear-gradient(to right,
+      color-mix(in srgb, var(--bg) calc(var(--veil-base) * 0.34), transparent) 0%,
+      color-mix(in srgb, var(--bg) calc(var(--veil-base) * 0.18), transparent) 55%,
+      transparent 100%),
+    color-mix(in srgb, var(--bg) var(--veil-base), transparent);
+}
+.home-skin[data-home-skin="light"] .panel[data-side="right"] .panel-veil {
+  background:
+    linear-gradient(to left,
+      color-mix(in srgb, var(--bg) calc(var(--veil-base) * 0.36), transparent) 0%,
+      color-mix(in srgb, var(--bg) calc(var(--veil-base) * 0.2), transparent) 52%,
+      transparent 100%),
+    color-mix(in srgb, var(--bg) var(--veil-base), transparent);
+}
+.home-skin[data-home-skin="light"] .panel[data-side="bottom"] .panel-veil {
+  background:
+    linear-gradient(to top,
+      color-mix(in srgb, var(--bg) calc(var(--veil-base) * 0.36), transparent) 0%,
+      color-mix(in srgb, var(--bg) calc(var(--veil-base) * 0.2), transparent) 52%,
+      transparent 100%),
+    color-mix(in srgb, var(--bg) var(--veil-base), transparent);
+}
+@media (max-width: 780px) {
+  .home-skin[data-home-skin="light"] .panel-veil,
+  .home-skin[data-home-skin="light"] .panel[data-side="right"] .panel-veil {
+    background:
+      linear-gradient(to top,
+        color-mix(in srgb, var(--bg) calc(var(--veil-base) * 0.36), transparent) 0%,
+        color-mix(in srgb, var(--bg) calc(var(--veil-base) * 0.18), transparent) 55%,
+        transparent 100%),
+      color-mix(in srgb, var(--bg) var(--veil-base), transparent);
+  }
+}
+
+/* Le panneau des préférences prend une ombre de papier, pas un noir franc. */
+.home-skin[data-home-skin="light"] .prefs-panel {
+  background: color-mix(in srgb, var(--surface) 99%, transparent);
+  box-shadow: 0 24px 44px -30px rgba(16, 32, 48, .42);
+}
+
+/* ---------------------------------------------------------------
+   2. LA CITATION — une pastille de papier plutôt que du texte nu
+   posé sur la photo. C'était le coin le plus délavé de la section.
+   --------------------------------------------------------------- */
+.home-skin[data-home-skin="light"] .pull {
+  max-width: 54ch;
+  padding: 14px 18px 15px;
+  border-left-width: 2px;
+  border-left-color: color-mix(in srgb, var(--accent) 74%, transparent);
+  border-radius: 0 14px 14px 0;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  box-shadow: 0 16px 34px -32px rgba(16, 32, 48, .5);
+}
+.home-skin[data-home-skin="light"] .pull p {
+  font-size: 14.5px;
+  line-height: 1.68;
+  color: color-mix(in srgb, var(--text) 94%, transparent);
+}
+
+/* ---------------------------------------------------------------
+   3. LE TEXTE COURANT — les mélanges 76-88 % viraient au gris clair
+   sur le papier. Chacun remonte d'un cran, sans devenir du noir pur.
+   --------------------------------------------------------------- */
+.home-skin[data-home-skin="light"] .panel-copy .sub { color: color-mix(in srgb, var(--text) 93%, transparent); }
+.home-skin[data-home-skin="light"] .rule-list p { color: color-mix(in srgb, var(--text) 91%, transparent); }
+.home-skin[data-home-skin="light"] .faq-a p { color: color-mix(in srgb, var(--text) 91%, transparent); }
+.home-skin[data-home-skin="light"] .card ul { color: color-mix(in srgb, var(--text) 91%, transparent); }
+.home-skin[data-home-skin="light"] .foot-grid a { color: color-mix(in srgb, var(--text) 91%, transparent); }
+
+/* Le petit texte des encarts chiffrés, resté très pâle sur fond blanc. */
+.home-skin[data-home-skin="light"] :is(
+  .calc-note,
+  .calc-examples-hint,
+  .calc-share-hint,
+  .calc-res-hint,
+  .calc-res-tile em,
+  .calc-verdict-copy p,
+  .calc-banner-copy p,
+  .calc-floor-sync,
+  .calc-last-export,
+  .ph-note,
+  .ph-price,
+  .ph-stats
+) {
+  color: color-mix(in srgb, var(--text) 76%, transparent);
+}
+.home-skin[data-home-skin="light"] .calc-hint--soft { color: color-mix(in srgb, var(--text) 70%, transparent); }
+.home-skin[data-home-skin="light"] .calc-hint--warn { color: color-mix(in srgb, var(--accent2) 92%, var(--text)); }
+
+/* ---------------------------------------------------------------
+   4. LE SURTITRE — le libellé mono posé au-dessus des titres. Le jeton
+   « muted » des petits libellés a déjà été foncé dans le thème clair ;
+   le surtitre, lui, tenait uniquement de l'ambre clair.
+   --------------------------------------------------------------- */
+.home-skin[data-home-skin="light"] .stamp { color: color-mix(in srgb, var(--accent2) 88%, var(--text)); }
+
+/* Les filets de séparation gagnent un peu de présence, sinon les blocs se
+   fondent les uns dans les autres sur fond clair. */
+.home-skin[data-home-skin="light"] .rule-list li,
+.home-skin[data-home-skin="light"] .stats div,
+.home-skin[data-home-skin="light"] .faq-list,
+.home-skin[data-home-skin="light"] .faq-item {
+  border-color: color-mix(in srgb, var(--text) 22%, transparent);
+}

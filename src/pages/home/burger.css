@@ -1,0 +1,220 @@
+/* LE COMPTEUR « CONTACTS À COMPLÉTER » DU MENU BURGER
+   Même rangée que « À relancer », mais dans la couleur du second accent :
+   on distingue d'un coup d'œil un message à relancer d'une fiche à compléter. */
+.nav-mobile .nav-mobile-contacts { display: flex; align-items: center; gap: 9px;
+  padding: 10px 12px; border-radius: 12px;
+  font-family: var(--font-label); font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; text-decoration: none; color: var(--accent2);
+  border: 1px solid color-mix(in srgb, var(--accent2) 42%, transparent);
+  background: color-mix(in srgb, var(--accent2) 12%, transparent);
+  transition: background .2s ease-out, border-color .2s ease-out; }
+.nav-mobile .nav-mobile-contacts:hover {
+  background: color-mix(in srgb, var(--accent2) 20%, transparent);
+  border-color: color-mix(in srgb, var(--accent2) 66%, transparent); }
+.nav-mobile .nav-mobile-contacts i { font-size: 15px; color: var(--accent2); }
+/* LA PASTILLE « CONTACTS À COMPLÉTER » SUR LE BOUTON DU MENU
+   Elle vit à côté du compteur « à relancer », dans la couleur du second accent :
+   les fiches à compléter se repèrent sans ouvrir le menu. */
+.burger-wrap .burger-badge.is-contacts { top: auto; right: -6px; bottom: -2px; left: auto;
+  text-decoration: none; cursor: pointer;
+  background: color-mix(in srgb, var(--bg) 92%, transparent); color: var(--accent2);
+  border: 1px solid color-mix(in srgb, var(--accent2) 72%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent);
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out,
+    transform .2s ease-out; }
+.burger-wrap a.burger-badge.is-contacts:hover,
+.burger-wrap a.burger-badge.is-contacts:focus-visible {
+  background: var(--accent2); color: var(--bg); border-color: var(--accent2);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent),
+    0 0 10px color-mix(in srgb, var(--accent2) 55%, transparent); }
+.burger-wrap a.burger-badge.is-contacts:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent2) 80%, transparent); outline-offset: 3px; }
+
+.nav-mobile-contacts-count { flex: 0 0 auto; display: inline-flex; align-items: center;
+  justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0;
+  color: var(--bg); background: var(--accent2); }
+
+/* LA PASTILLE « IMPORTÉES » SUR LE BOUTON DU MENU
+   Troisième compteur, en haut à gauche du burger : il ouvre le tableau de bord
+   déjà filtré sur les fiches dont l'adresse vient du fichier de travail. */
+.burger-wrap .burger-badge.is-imported { top: -1px; right: auto; bottom: auto; left: -6px;
+  text-decoration: none; cursor: pointer;
+  background: color-mix(in srgb, var(--bg) 92%, transparent); color: var(--accent2);
+  border: 1px solid color-mix(in srgb, var(--accent2) 72%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent);
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out,
+    transform .2s ease-out; }
+.burger-wrap a.burger-badge.is-imported:hover,
+.burger-wrap a.burger-badge.is-imported:focus-visible {
+  background: var(--accent2); color: var(--bg); border-color: var(--accent2);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent),
+    0 0 10px color-mix(in srgb, var(--accent2) 55%, transparent); }
+.burger-wrap a.burger-badge.is-imported:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent2) 80%, transparent); outline-offset: 3px; }
+
+/* LA PASTILLE DES RÉIMPORTS DU JOUR, À CÔTÉ DE CELLE DES ADRESSES IMPORTÉES
+   Même coin, un cran en dessous : elle dit combien de fiches le fichier a
+   remplies aujourd'hui, pour distinguer un import frais d'un badge d'hier. */
+.burger-wrap .burger-badge.is-imported-today { top: auto; right: auto;
+  bottom: -2px; left: -6px; min-width: 16px; height: 16px; padding: 0 4px;
+  font-size: 8.5px; font-weight: 600; text-decoration: none; cursor: pointer;
+  background: color-mix(in srgb, var(--accent2) 16%, var(--bg));
+  color: color-mix(in srgb, var(--accent2) 92%, var(--text));
+  border: 1px solid color-mix(in srgb, var(--accent2) 60%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent);
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out,
+    transform .2s ease-out; }
+.burger-wrap a.burger-badge.is-imported-today:hover,
+.burger-wrap a.burger-badge.is-imported-today:focus-visible {
+  background: var(--accent2); color: var(--bg); border-color: var(--accent2);
+  transform: scale(1.08); }
+.burger-wrap a.burger-badge.is-imported-today:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent2) 80%, transparent); outline-offset: 3px; }
+
+/* Dans le panneau, le compteur du jour s'ajoute à la ligne des adresses importées */
+.nav-mobile-imported-today { display: inline-flex; align-items: center; gap: 3px;
+  flex: 0 0 auto; padding: 1px 6px; border-radius: 999px;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .06em;
+  text-transform: uppercase; white-space: nowrap;
+  color: var(--accent2);
+  background: color-mix(in srgb, var(--accent2) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent2) 36%, transparent); }
+.nav-mobile-imported-today i { font-size: 9px; color: var(--accent2); }
+
+/* LA PASTILLE « CETTE SEMAINE », SUR LE BOUTON DU MENU
+   Posée sous la pastille d'alerte, à droite : le jour dit ce qui vient de
+   tourner, la semaine dit à quelle cadence le fichier revient. Un liseré en
+   pointillés la distingue d'un compteur d'un seul jour. */
+.burger-wrap .burger-badge.is-imported-week { top: 15px; right: -5px;
+  min-width: 16px; height: 14px; padding: 0 3px;
+  font-size: 7.5px; font-weight: 600; text-decoration: none; cursor: pointer;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  color: color-mix(in srgb, var(--accent2) 84%, var(--text));
+  border: 1px dashed color-mix(in srgb, var(--accent2) 58%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent);
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out,
+    transform .2s ease-out; }
+.burger-wrap a.burger-badge.is-imported-week:hover,
+.burger-wrap a.burger-badge.is-imported-week:focus-visible {
+  background: var(--accent2); color: var(--bg);
+  border-color: var(--accent2); border-style: solid; transform: scale(1.08); }
+.burger-wrap a.burger-badge.is-imported-week:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent2) 80%, transparent); outline-offset: 3px; }
+
+/* Dans le panneau, la cadence de la semaine suit celle du jour */
+.nav-mobile-imported-week { display: inline-flex; align-items: center; gap: 3px;
+  flex: 0 0 auto; padding: 1px 6px; border-radius: 999px;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .06em;
+  text-transform: uppercase; white-space: nowrap;
+  color: color-mix(in srgb, var(--accent2) 84%, var(--text));
+  background: transparent;
+  border: 1px dashed color-mix(in srgb, var(--accent2) 38%, transparent); }
+.nav-mobile-imported-week i { font-size: 9px; color: var(--accent2); }
+
+/* LA PASTILLE « À BAPTISER », SOUS CELLE DE LA SEMAINE
+   Une fiche importée sans nom de fournisseur : la pastille est dans l'ambre du
+   premier accent, pour ne pas se confondre avec les compteurs d'import. */
+.burger-wrap .burger-badge.is-unnamed { top: 30px; right: -5px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  font-size: 8.5px; font-weight: 600; text-decoration: none; cursor: pointer;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 68%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent);
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out,
+    transform .2s ease-out; }
+.burger-wrap a.burger-badge.is-unnamed:hover,
+.burger-wrap a.burger-badge.is-unnamed:focus-visible {
+  background: var(--accent); color: var(--bg); border-color: var(--accent);
+  transform: scale(1.08); }
+.burger-wrap a.burger-badge.is-unnamed:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 80%, transparent); outline-offset: 3px; }
+/* Une fiche qui attend son nom depuis plus de dix jours : la pastille passe au
+   rouge, pour que l'oubli se voie depuis n'importe quelle page. */
+.burger-wrap .burger-badge.is-unnamed.is-cold {
+  color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 72%, transparent);
+  background: color-mix(in srgb, var(--alert) 16%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent); }
+.burger-wrap a.burger-badge.is-unnamed.is-cold:hover,
+.burger-wrap a.burger-badge.is-unnamed.is-cold:focus-visible {
+  background: var(--alert); color: var(--bg); border-color: var(--alert);
+  transform: scale(1.08); }
+/* Vingt jours et plus : l'oubli est vraiment ancien. Le rouge ne suffit plus à
+   attirer l'œil, le contour de la pastille respire au rythme d'un halo. */
+.burger-wrap .burger-badge.is-unnamed.is-stale {
+  animation: unnamed-stale-ring 1.9s ease-in-out infinite; }
+@keyframes unnamed-stale-ring {
+  0%, 100% {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent),
+      0 0 0 2px color-mix(in srgb, var(--alert) 34%, transparent); }
+  50% {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent),
+      0 0 0 5px color-mix(in srgb, var(--alert) 52%, transparent); }
+}
+/* Mouvement réduit : le contour reste marqué, mais figé. */
+@media (prefers-reduced-motion: reduce) {
+  .burger-wrap .burger-badge.is-unnamed.is-stale { animation: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--bg) 88%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--alert) 52%, transparent); }
+}
+
+/* Dans le panneau, la ligne « fiches à baptiser » prend l'ambre du premier accent */
+.nav-mobile .nav-mobile-unnamed {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 46%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.nav-mobile .nav-mobile-unnamed:hover {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 68%, transparent); }
+.nav-mobile .nav-mobile-unnamed i { color: var(--accent); }
+.nav-mobile-unnamed .nav-mobile-contacts-count {
+  color: var(--bg); background: var(--accent); }
+
+/* LES TROIS PREMIÈRES FICHES À BAPTISER, SOUS LA LIGNE DU COMPTEUR
+   Une ligne chacune, avec son nom : on ouvre directement celle qu'on veut
+   nommer, sans passer par la liste filtrée du tableau de bord. */
+.nav-mobile .nav-mobile-unnamed-list { display: grid; gap: 4px; margin: -8px 0 0;
+  padding: 0 0 0 10px; list-style: none;
+  border-left: 1px dashed color-mix(in srgb, var(--accent) 42%, transparent); }
+.nav-mobile .nav-mobile-unnamed-list li { min-width: 0; }
+.nav-mobile .nav-mobile-unnamed-item { display: flex; align-items: center; gap: 7px;
+  padding: 6px 8px; border-radius: 9px; min-width: 0;
+  text-decoration: none; cursor: pointer;
+  color: color-mix(in srgb, var(--accent) 88%, var(--text));
+  background: transparent; border: 1px solid transparent;
+  transition: background .18s ease-out, border-color .18s ease-out, color .18s ease-out; }
+.nav-mobile .nav-mobile-unnamed-item i { flex: 0 0 auto; font-size: 12px; color: var(--accent); }
+.nav-mobile .nav-mobile-unnamed-name { flex: 1 1 auto; min-width: 0; font-size: 12.5px;
+  font-weight: 500; letter-spacing: 0; text-transform: none; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; }
+.nav-mobile .nav-mobile-unnamed-item > i:last-child { opacity: .5; font-size: 13px; }
+.nav-mobile .nav-mobile-unnamed-item:hover,
+.nav-mobile .nav-mobile-unnamed-item:focus-visible {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 46%, transparent); color: var(--text); }
+.nav-mobile .nav-mobile-unnamed-item:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent); outline-offset: 1px; }
+
+/* L'ÂGE DE LA FICHE, À CÔTÉ DE SON NOM
+   Une petite pastille alignée à droite : le nom d'abord, puis depuis combien
+   de temps il attend. Elle s'ambre à trois jours et rougit à dix, comme sur
+   les cartes du tableau de bord — sans avoir à ouvrir la liste. */
+.nav-mobile .nav-mobile-unnamed-age { flex: 0 0 auto; display: inline-flex;
+  align-items: center; padding: 1px 6px; border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 7.5px; font-weight: 500;
+  letter-spacing: .05em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 56%, transparent);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent); }
+.nav-mobile .nav-mobile-unnamed-age.is-aging {
+  color: color-mix(in srgb, var(--accent) 88%, var(--text));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.nav-mobile .nav-mobile-unnamed-age.is-cold {
+  color: color-mix(in srgb, var(--alert) 88%, var(--text));
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+  border-color: color-mix(in srgb, var(--alert) 44%, transparent); }

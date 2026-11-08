@@ -1,0 +1,1246 @@
+/* SELLER DASHBOARD */
+/* The shell carries the skin, so a single variable flip repaints the page. */
+.dash-page { --good: #6ed39a; min-height: 100svh; color: var(--text);
+  background:
+    radial-gradient(120% 60% at 50% -10%, color-mix(in srgb, var(--surface) 52%, transparent) 0%, transparent 62%),
+    var(--bg); }
+
+/* LIGHT / DARK SKIN BUTTON — STAYS IN REACH WHILE SCROLLING */
+.dash-skin {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 11px 0 9px;
+  border-radius: 999px; cursor: pointer; white-space: nowrap; box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out;
+}
+.dash-skin i { font-size: 14px; color: var(--accent); }
+.dash-skin:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.dash-skin.is-on { border-color: color-mix(in srgb, var(--accent) 62%, transparent); color: var(--text); }
+.dash-skin:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 75%, transparent); outline-offset: 3px;
+}
+@media (max-width: 900px) {
+  .dash-skin { width: 32px; padding: 0; justify-content: center; }
+  .dash-skin span { display: none; }
+}
+/* Same bar geometry as the calculator header so the navigation never jumps. */
+.dash-nav { position: sticky; top: 0; z-index: 60; display: flex; align-items: center; justify-content: space-between;
+  gap: 18px; padding: 14px clamp(20px, 4vw, 56px);
+  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent); }
+.dash-nav-links { display: flex; align-items: center; gap: clamp(16px, 1.5vw, 28px); min-width: 0; }
+.dash-nav .nav-right { gap: 10px; }
+.dash-nav-links a { position: relative; color: color-mix(in srgb, var(--text) 82%, transparent); font-size: 14px;
+  text-decoration: none; white-space: nowrap; cursor: pointer; transition: color .2s ease-out; }
+.dash-nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 1px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  transition: transform .3s ease-out; }
+.dash-nav-links a:hover { color: var(--text); }
+.dash-nav-links a:hover::after { transform: scaleX(1); }
+.dash-nav-links a.is-current { color: var(--text); font-weight: 500; }
+.dash-nav-links a.is-current::after {
+  transform: scaleX(1); box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+@media (max-width: 900px) {
+  .dash-nav { padding: 12px 16px; }
+  .dash-nav .nav-logo { font-size: 17px; }
+}
+/* Same breakpoint as the home and calculator bars: the burger takes over at 1160px. */
+@media (max-width: 1160px) {
+  .dash-nav-links { display: none !important; }
+  .dash-nav .burger { display: flex; }
+}
+@media (max-width: 560px) { .dash-nav .nav-logo { font-size: 15px; gap: 7px; } }
+/* Very narrow: the bar gives up the alert pill, the burger keeps the count. */
+@media (max-width: 620px) { .dash-nav .nav-right .nav-alert-wrap { display: none; } }
+
+.dash { width: 100%; max-width: 1180px; margin: 0 auto; padding: clamp(28px, 4vw, 52px) clamp(18px, 4vw, 48px) 72px;
+  box-sizing: border-box; display: grid; gap: 0; }
+
+/* Reminder carried over from the calculator */
+.dash-banner { margin-bottom: clamp(18px, 2.4vw, 30px); }
+
+.dash-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  gap: clamp(24px, 4vw, 56px); align-items: center; padding: clamp(8px, 2vw, 26px) 0 clamp(24px, 3vw, 40px); }
+.dash-hero::before { content: ""; position: absolute; top: -60px; right: 0; width: 460px; height: 460px;
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 68%); }
+.dash-hero-copy { position: relative; z-index: 1; display: grid; gap: 14px; }
+.dash-hero-copy h1 { margin: 0; font-size: clamp(32px, 4.4vw, 54px); line-height: 1.02; letter-spacing: -.035em;
+  font-weight: 600; max-width: 18ch; }
+.dash-sub { margin: 0; max-width: 46ch; font-size: clamp(14px, 1.2vw, 17px); line-height: 1.55;
+  color: color-mix(in srgb, var(--text) 76%, transparent); }
+.dash-hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.dash-chip { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border-radius: 999px;
+  font-family: var(--font-label); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); background: color-mix(in srgb, var(--text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent); }
+.dash-chip i { font-size: 13px; }
+.dash-chip.is-cloud { color: var(--accent2); border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+.dash-readout { position: relative; z-index: 1; display: grid; gap: 8px; padding: clamp(20px, 2.4vw, 30px);
+  border-radius: 22px; background: color-mix(in srgb, var(--surface) 76%, transparent);
+  backdrop-filter: blur(14px); border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, .9); }
+.dash-readout-lab { font-family: var(--font-label); font-size: 9.5px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--accent2); }
+.dash-readout-net { font-size: clamp(38px, 5vw, 60px); font-weight: 600; letter-spacing: -.035em; line-height: 1;
+  white-space: nowrap; }
+.dash-readout-net.is-pos { color: var(--accent2); }
+.dash-readout-net.is-neg { color: var(--alert); }
+.dash-readout-name { font-size: 13.5px; color: color-mix(in srgb, var(--text) 78%, transparent); }
+.dash-readout-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 6px; }
+.dash-readout-grid > div { padding-top: 9px; border-top: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  min-width: 0; }
+.dash-readout-grid span { display: block; margin-bottom: 3px; font-family: var(--font-label); font-size: 8.5px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.dash-readout-grid b { font-size: 15px; font-weight: 600; white-space: nowrap; }
+.dash-readout-bar { display: flex; height: 8px; margin-top: 10px; border-radius: 999px; overflow: hidden;
+  background: color-mix(in srgb, var(--text) 12%, transparent); }
+.dash-readout-note { font-family: var(--font-label); font-size: 9px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted); }
+
+.dash-bar-cost { background: color-mix(in srgb, var(--text) 34%, transparent); transition: width .35s ease-out; }
+.dash-bar-profit { background: var(--accent); transition: width .35s ease-out;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent); }
+
+.dash-error { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 18px; padding: 12px 14px;
+  border-radius: 12px; font-size: 13px; color: var(--alert);
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--alert) 40%, transparent); }
+.dash-retry { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; padding: 6px 12px;
+  border-radius: 999px; border: 1px solid color-mix(in srgb, var(--alert) 50%, transparent);
+  background: transparent; color: var(--alert); font-family: var(--font-label); font-size: 10px;
+  letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; cursor: pointer; }
+.dash-retry:hover { background: color-mix(in srgb, var(--alert) 18%, transparent); }
+
+.dash-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0 24px;
+  padding-top: 8px; border-top: 1px solid color-mix(in srgb, var(--text) 14%, transparent); }
+.dash-kpi { padding: 16px 0; min-width: 0; }
+.dash-kpi span { display: block; margin-bottom: 6px; font-family: var(--font-label); font-size: 9px;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.dash-kpi b { font-size: clamp(20px, 2.2vw, 28px); font-weight: 600; letter-spacing: -.02em; white-space: nowrap; }
+.dash-kpi b.is-neg { color: var(--alert); }
+/* Scenarios brought back to green: the one number that only ever goes up. */
+.dash-kpi b.is-pos { color: var(--good); }
+
+/* DASHBOARD — VERDICT COUNTER (same floor as the calculator) */
+.dash-tally { display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap;
+  margin: 0 0 4px; padding: 11px 14px; border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 68%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 13%, transparent); }
+.dash-tally-lab { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); }
+.dash-tally-lab i { font-size: 14px; color: var(--accent2); }
+.dash-tally-list { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0; padding: 0;
+  list-style: none; }
+.dash-tally-item { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px;
+  border-radius: 999px; white-space: nowrap; color: var(--v);
+  border: 1px solid color-mix(in srgb, var(--v) 46%, transparent);
+  background: color-mix(in srgb, var(--v) 14%, transparent);
+  font-family: var(--font-label); font-size: 9.5px; letter-spacing: .04em; }
+.dash-tally-item.is-good { --v: var(--good); }
+.dash-tally-item.is-warn { --v: var(--accent); }
+.dash-tally-item.is-bad { --v: var(--alert); }
+.dash-tally-item i { font-size: 12px; }
+.dash-tally-item b { font-size: 12px; font-weight: 600; }
+/* The red chip is a switch: it narrows the list exactly like the burger. */
+.dash-tally-btn { display: inline-flex; align-items: center; gap: 5px; margin: -4px -10px -4px -8px;
+  padding: 4px 10px 4px 8px; border: 0; border-radius: 999px; background: transparent;
+  color: inherit; font: inherit; cursor: pointer;
+  transition: background .2s ease-out; }
+.dash-tally-btn:hover { background: color-mix(in srgb, var(--v) 24%, transparent); }
+.dash-tally-btn[aria-pressed="true"] { background: color-mix(in srgb, var(--v) 28%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--v) 60%, transparent); }
+.dash-tally-btn:focus-visible { outline: 2px solid color-mix(in srgb, var(--v) 70%, transparent);
+  outline-offset: 2px; }
+.dash-tally-switch { margin-left: 2px; opacity: .7; }
+.dash-tally-btn[aria-pressed="true"] .dash-tally-switch { opacity: 1; }
+.dash-tally-ok { display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-label); font-size: 9.5px; letter-spacing: .04em;
+  color: color-mix(in srgb, var(--text) 55%, transparent); }
+.dash-tally-ok i { font-size: 12px; color: var(--good); }
+.dash-tally-floor { margin-left: auto; font-family: var(--font-label); font-size: 8.5px;
+  letter-spacing: .05em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 42%, transparent); }
+/* D'OÙ VIENT LE SEUIL VERT AFFICHÉ : DU COMPTE OU DE CET APPAREIL */
+.dash-tally-sync { flex: 0 0 100%; display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .03em; line-height: 1.45;
+  color: color-mix(in srgb, var(--text) 46%, transparent); }
+.dash-tally-sync i { flex: 0 0 auto; font-size: 11px; }
+.dash-tally-sync.is-on { color: color-mix(in srgb, var(--good) 78%, var(--text)); }
+@media (max-width: 720px) { .dash-tally-floor { margin-left: 0; } }
+
+/* MONTHLY PROFIT CURVE */
+.dc { display: grid; gap: 14px; padding: clamp(16px, 2vw, 22px); border-radius: 20px;
+  background: color-mix(in srgb, var(--surface) 76%, transparent); backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--text) 13%, transparent); }
+.dc-stats { display: flex; align-items: flex-end; gap: 12px 34px; flex-wrap: wrap; }
+.dc-stat { display: grid; gap: 3px; min-width: 0; }
+.dc-stat span { font-family: var(--font-label); font-size: 8.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); }
+.dc-stat b { font-size: clamp(16px, 1.7vw, 20px); font-weight: 600; letter-spacing: -.02em;
+  white-space: nowrap; }
+.dc-stat b.is-neg { color: var(--alert); }
+.dc-stat em { font-style: normal; font-family: var(--font-label); font-size: 9px;
+  letter-spacing: .04em; color: var(--muted); white-space: nowrap; }
+
+.dc-plot { position: relative; height: 214px; margin: 8px 0 2px; }
+.dc-zero { position: absolute; left: 0; right: 0; height: 0;
+  border-top: 1px dashed color-mix(in srgb, var(--text) 26%, transparent); }
+.dc-zero em { position: absolute; right: 0; top: -13px; font-style: normal;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 34%, transparent); }
+.dc-seg { position: absolute; pointer-events: none; }
+.dc-seg.is-up { background: linear-gradient(to top right, transparent calc(50% - 1px),
+  var(--accent) calc(50% - 1px), var(--accent) calc(50% + 1px), transparent calc(50% + 1px)); }
+.dc-seg.is-down { background: linear-gradient(to bottom right, transparent calc(50% - 1px),
+  var(--accent) calc(50% - 1px), var(--accent) calc(50% + 1px), transparent calc(50% + 1px)); }
+.dc-seg.is-flat { background: var(--accent); opacity: .6; }
+.dc-dot { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+  transform: translate(-50%, 50%); pointer-events: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bg) 78%, transparent);
+  transition: transform .18s ease-out, box-shadow .18s ease-out; }
+.dc-dot.is-neg { background: var(--alert); }
+.dc-dot.is-active { transform: translate(-50%, 50%) scale(1.55);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 26%, transparent); }
+.dc-hit { position: absolute; top: 0; bottom: 0; padding: 0; border: 0; border-radius: 8px;
+  background: transparent; cursor: pointer; }
+.dc-hit:hover { background: color-mix(in srgb, var(--text) 5%, transparent); }
+
+.dc-tip { position: absolute; z-index: 6; transform: translateX(-50%); display: grid; gap: 3px;
+  min-width: 172px; max-width: 230px; padding: 10px 11px; border-radius: 12px; pointer-events: none;
+  background: color-mix(in srgb, var(--bg) 96%, transparent); backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  box-shadow: 0 22px 46px -28px rgba(0, 0, 0, .95); }
+.dc-tip-month { font-family: var(--font-label); font-size: 8px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); }
+.dc-tip > b { font-size: 16px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+.dc-tip > b.is-pos { color: var(--accent2); }
+.dc-tip > b.is-neg { color: var(--alert); }
+.dc-tip ul { display: grid; gap: 4px; margin: 5px 0 0; padding: 6px 0 0; list-style: none;
+  border-top: 1px solid color-mix(in srgb, var(--text) 12%, transparent); }
+.dc-tip li { display: flex; align-items: baseline; gap: 6px; min-width: 0; font-size: 11px; }
+.dc-tip li em { flex: 1 1 auto; min-width: 0; font-style: normal; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+  color: color-mix(in srgb, var(--text) 78%, transparent); }
+.dc-tip li b { flex: 0 0 auto; font-weight: 500; white-space: nowrap; }
+.dc-key { flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+.dc-key.is-over { background: var(--alert); }
+
+.dc-months { display: flex; gap: 0; padding-top: 7px;
+  border-top: 1px solid color-mix(in srgb, var(--text) 10%, transparent); }
+.dc-months span { flex: 1 1 0; min-width: 0; text-align: center; font-family: var(--font-label);
+  font-size: 8.5px; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); }
+.dc-months span.is-active { color: var(--accent2); }
+.dc-hint { display: flex; align-items: center; gap: 6px; margin: 0; font-family: var(--font-label);
+  font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.dc-hint i { font-size: 12px; }
+@media (max-width: 640px) {
+  .dc-plot { height: 168px; }
+  .dc-months span { font-size: 7px; }
+}
+
+.dash-section { margin-top: clamp(32px, 4vw, 52px); }
+.dash-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px;
+  flex-wrap: wrap; margin-bottom: 16px; }
+.dash-section-head h2 { margin: 0; font-size: clamp(20px, 2.4vw, 28px); font-weight: 600; letter-spacing: -.025em; }
+.dash-section-head p { margin: 0; max-width: 52ch; font-size: 13px; line-height: 1.5;
+  color: color-mix(in srgb, var(--text) 62%, transparent); }
+
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+.dash-card { display: grid; gap: 9px; padding: 18px 18px 16px; border-radius: 18px; min-width: 0;
+  color: inherit; text-decoration: none; cursor: pointer;
+  background: color-mix(in srgb, var(--surface) 76%, transparent); backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--text) 13%, transparent);
+  transition: transform .22s ease-out, border-color .22s ease-out; }
+.dash-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--text) 28%, transparent); }
+.dash-card.is-fix { cursor: default; }
+.dash-card.is-fix:hover { transform: none; border-color: color-mix(in srgb, var(--text) 13%, transparent); }
+.dash-card.is-fix.is-best:hover { border-color: color-mix(in srgb, var(--accent) 58%, transparent); }
+.dash-card.is-best { border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
+.dash-card.is-highlight { background: color-mix(in srgb, var(--good) 9%, var(--surface));
+  border-color: color-mix(in srgb, var(--good) 58%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--good) 24%, transparent); }
+.dash-card { scroll-margin-top: 96px; scroll-margin-bottom: 40px; }
+.dash-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.dash-card-top h3 { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -.01em;
+  flex: 1 1 auto; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-best-tag { flex: 0 0 auto; padding: 2px 8px; border-radius: 999px; background: var(--accent);
+  color: var(--bg); font-family: var(--font-label); font-size: 8px; letter-spacing: .1em;
+  text-transform: uppercase; }
+/* Came back green from the calculator: said once, then forgotten. */
+.dash-fixed-tag { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px 2px 6px; border-radius: 999px; white-space: nowrap; color: var(--good);
+  border: 1px solid color-mix(in srgb, var(--good) 46%, transparent);
+  background: color-mix(in srgb, var(--good) 14%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; }
+.dash-fixed-tag i { font-size: 10px; }
+/* Le fournisseur n'a jamais reçu son message : la relance se voit d'un coup d'œil. */
+.dash-relance-tag { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px 2px 6px; border-radius: 999px; white-space: nowrap; color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 48%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; }
+.dash-relance-tag i { font-size: 10px; }
+
+/* SCENARIO CARDS — TRAFFIC-LIGHT VERDICT (same floor as the calculator) */
+.dash-card-tags { display: inline-flex; align-items: center; gap: 4px 5px; flex: 0 0 auto; flex-wrap: wrap;
+  justify-content: flex-end; max-width: 60%; }
+.dash-verdict { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px 2px 6px;
+  border-radius: 999px; white-space: nowrap; color: var(--v);
+  border: 1px solid color-mix(in srgb, var(--v) 46%, transparent);
+  background: color-mix(in srgb, var(--v) 14%, transparent);
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
+.dash-verdict i { font-size: 11px; }
+.dash-verdict.is-good { --v: var(--good); }
+.dash-verdict.is-warn { --v: var(--accent); }
+.dash-verdict.is-bad { --v: var(--alert); }
+.dash-card-net { font-size: 26px; font-weight: 600; letter-spacing: -.03em; line-height: 1.05; white-space: nowrap; }
+.dash-card-net.is-pos { color: var(--accent2); }
+.dash-card-net.is-neg { color: var(--alert); }
+.dash-card-cap { font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); }
+/* Same green price pill as the calculator cards. */
+.dash-card-green { display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
+  width: fit-content; max-width: 100%; margin-top: 1px; padding: 3px 8px; border-radius: 999px;
+  white-space: nowrap; background: color-mix(in srgb, var(--good) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--good) 36%, transparent); }
+.dash-card-green i { flex: 0 0 auto; font-size: 7px; color: var(--good); }
+.dash-card-green em { font-style: normal; font-family: var(--font-label); font-size: 8px;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--good) 80%, var(--text)); }
+.dash-card-green b { font-family: var(--font-label); font-size: 11px; font-weight: 600;
+  font-variant-numeric: tabular-nums; color: var(--good); }
+.dash-card-green.is-none { --good: var(--alert); border-color: color-mix(in srgb, var(--alert) 40%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+/* LA PHRASE DE NÉGOCIATION, JUSTE SOUS LE PRIX CONSEILLÉ */
+.dash-card-pitch { display: inline-flex; align-items: flex-start; gap: 5px; align-self: flex-start;
+  max-width: 100%; margin-top: 1px; padding: 3px 8px; border-radius: 8px;
+  font-family: var(--font-label); font-size: 8.5px; line-height: 1.45; letter-spacing: .02em;
+  color: color-mix(in srgb, var(--text) 66%, transparent);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent); }
+.dash-card-pitch i { flex: 0 0 auto; margin-top: 1px; font-size: 10px;
+  color: color-mix(in srgb, var(--good) 82%, var(--text)); }
+/* COPIER L'E-MAIL BILINGUE, SANS OUVRIR LE RÉCAPITULATIF */
+.dash-card-mail { display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
+  width: fit-content; max-width: 100%; margin-top: 2px; padding: 4px 9px; border-radius: 999px;
+  cursor: pointer; font-family: var(--font-label); font-size: 8.5px; letter-spacing: .06em;
+  text-transform: uppercase; white-space: nowrap;
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-card-mail i { font-size: 11px; }
+.dash-card-mail:hover { color: var(--text);
+  border-color: color-mix(in srgb, var(--accent2) 46%, transparent);
+  background: color-mix(in srgb, var(--accent2) 12%, transparent); }
+.dash-card-mail.is-done { color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 46%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-card-mail.is-fail { color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 46%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-card-pick { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+.dash-card-pick-lab { display: inline-flex; align-items: center; gap: 4px; margin-right: 2px;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); }
+.dash-card-pick-lab i { font-size: 10px; }
+.dash-card-pick-btn { display: inline-flex; align-items: center; gap: 4px; max-width: 100%;
+  padding: 3px 8px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .05em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+  background: transparent; border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  transition: color .16s ease, border-color .16s ease, background .16s ease; }
+.dash-card-pick-btn i { font-size: 10px; color: var(--good); }
+.dash-card-pick-btn:hover { color: var(--text);
+  border-color: color-mix(in srgb, var(--text) 34%, transparent); }
+.dash-card-pick-btn.is-on { color: var(--text);
+  border-color: color-mix(in srgb, var(--accent2) 52%, transparent);
+  background: color-mix(in srgb, var(--accent2) 14%, transparent); }
+.dash-card-mail-when { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .05em;
+  color: color-mix(in srgb, var(--text) 46%, transparent); }
+.dash-card-mail-when i { font-size: 10px; color: var(--good); }
+/* L'ADRESSE EST ARRIVÉE PAR LE FICHIER, PAS TAPÉE À LA MAIN */
+.dash-card-imported { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start;
+  width: fit-content; max-width: 100%; padding: 2px 8px 2px 6px; border-radius: 999px;
+  white-space: nowrap; font-family: var(--font-label); font-size: 8px; letter-spacing: .07em;
+  text-transform: uppercase; color: color-mix(in srgb, var(--accent2) 82%, var(--text));
+  background: color-mix(in srgb, var(--accent2) 11%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent2) 34%, transparent); }
+.dash-card-imported i { font-size: 10px; }
+/* La croix de la pastille : retirer la trace de cette seule fiche. */
+.dash-card-imported-x { display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; margin-left: 1px; padding: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; border: 0; color: inherit; opacity: .62;
+  transition: opacity .18s ease, background .18s ease; }
+.dash-card-imported-x i { font-size: 11px; }
+.dash-card-imported-x:hover { opacity: 1;
+  background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+.dash-card-imported-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent2) 62%, transparent); outline-offset: 1px; opacity: 1; }
+/* LES DERNIERS RÉIMPORTS DE LA FICHE, EN PETIT SOUS LE BADGE */
+.dash-card-imports { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px;
+  align-self: flex-start; max-width: 100%; margin: 0; padding: 0 2px; list-style: none;
+  font-family: var(--font-label); font-size: 7.5px; letter-spacing: .06em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 46%, transparent); }
+.dash-card-imports li { white-space: nowrap; }
+.dash-card-imports li + li::before { content: "·"; margin-right: 6px;
+  color: color-mix(in srgb, var(--accent2) 55%, transparent); }
+.dash-card-imports-lab { display: inline-flex; align-items: center; gap: 4px;
+  color: color-mix(in srgb, var(--accent2) 74%, var(--text)); }
+.dash-card-imports-lab i { font-size: 10px; }
+/* La relance d'un seul fournisseur, en ambre : elle part de la carte, pas de la liste */
+.dash-card-relance { color: color-mix(in srgb, var(--accent) 80%, var(--text));
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.dash-card-relance i { color: var(--accent); font-size: 11px; }
+.dash-card-relance:hover { color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.dash-card-relance:hover i { color: var(--accent); }
+.dash-card-relance.is-done { color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 46%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-card-relance.is-done i { color: var(--good); }
+.dash-card-relance.is-fail { color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 46%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-card-relance.is-fail i { color: var(--alert); }
+.dash-card .dash-bar { display: flex; height: 6px; border-radius: 999px; overflow: hidden;
+  background: color-mix(in srgb, var(--text) 12%, transparent); }
+.dash-card-rows { display: grid; gap: 4px; margin: 2px 0 0; }
+.dash-card-rows > div { display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  padding-top: 4px; border-top: 1px solid color-mix(in srgb, var(--text) 9%, transparent); min-width: 0; }
+.dash-card-rows dt { font-family: var(--font-label); font-size: 8.5px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted); }
+.dash-card-rows dd { margin: 0; font-size: 12.5px; font-weight: 500; white-space: nowrap; }
+.dash-supplier { display: flex; align-items: flex-start; gap: 8px; margin-top: 4px; padding: 9px 11px;
+  border-radius: 11px; background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent); }
+.dash-supplier i { flex: 0 0 auto; margin-top: 1px; font-size: 14px; color: var(--accent); }
+.dash-supplier span { display: block; font-family: var(--font-label); font-size: 8px; letter-spacing: .1em;
+  text-transform: uppercase; color: color-mix(in srgb, var(--accent2) 90%, var(--text)); }
+.dash-supplier b { font-size: 11.5px; font-weight: 500; color: var(--text); }
+.dash-supplier.is-tie { background: color-mix(in srgb, var(--text) 6%, transparent);
+  border-color: color-mix(in srgb, var(--text) 20%, transparent); }
+.dash-supplier.is-tie i { color: var(--muted); }
+.dash-card-none { display: flex; align-items: center; gap: 6px; margin: 4px 0 0; font-size: 11px;
+  color: color-mix(in srgb, var(--text) 50%, transparent); }
+.dash-card-none i { font-size: 12px; }
+.dash-card-link { display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 4px; padding: 9px 12px; border-radius: 999px; text-decoration: none;
+  border: 1px solid color-mix(in srgb, var(--text) 20%, transparent); background: transparent;
+  color: color-mix(in srgb, var(--text) 86%, transparent); font-family: var(--font-label); font-size: 9.5px;
+  letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; cursor: pointer;
+  transition: border-color .2s ease-out, background .2s ease-out, color .2s ease-out; }
+.dash-card-link i { font-size: 13px; }
+.dash-card-link:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent2); }
+/* Filtered view: one clear action per card. */
+.dash-card-fix { display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 4px; padding: 10px 12px; border-radius: 999px; text-decoration: none; white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--alert) 46%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+  color: color-mix(in srgb, var(--alert) 92%, var(--text));
+  font-family: var(--font-label); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out; }
+.dash-card-fix i { font-size: 13px; }
+.dash-card-fix:hover { background: var(--alert); border-color: var(--alert); color: var(--bg); }
+.dash-card-fix:focus-visible { outline: 2px solid color-mix(in srgb, var(--alert) 70%, transparent);
+  outline-offset: 2px; }
+
+.dash-suppliers { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+/* SUPPLIER COMPARISON — SORT, ALERTS FIRST */
+.dash-sort { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.dash-sort-lab { font-family: var(--font-label); font-size: 9px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted); }
+.dash-sort-group { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+  background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.dash-sort-group button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+  border-radius: 999px; border: 0; background: transparent; cursor: pointer; white-space: nowrap;
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+  font-family: var(--font-label); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out; }
+.dash-sort-group button i { font-size: 13px; }
+.dash-sort-group button b { font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 999px;
+  background: var(--alert); color: var(--bg); }
+.dash-sort-group button:hover { color: var(--text); }
+.dash-sort-group button.is-active { background: var(--accent); color: var(--bg); }
+.dash-sort-group button.is-active b { background: var(--bg); color: var(--alert); }
+.dash-duel.is-alert { border-color: color-mix(in srgb, var(--alert) 40%, transparent);
+  background: color-mix(in srgb, var(--alert) 8%, color-mix(in srgb, var(--surface) 72%, transparent)); }
+.dash-duel-alert { display: inline-flex; align-items: center; gap: 5px; justify-self: start;
+  padding: 3px 9px; border-radius: 999px; color: var(--alert);
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .07em; text-transform: uppercase;
+  background: color-mix(in srgb, var(--alert) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--alert) 42%, transparent); }
+.dash-duel-alert i { font-size: 12px; }
+
+.dash-duel { display: grid; gap: 8px; padding: 18px; border-radius: 18px; min-width: 0;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 13%, transparent); }
+.dash-duel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.dash-duel-name { font-size: 13.5px; font-weight: 600; letter-spacing: -.01em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-duel-meta { font-family: var(--font-label); font-size: 9px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.dash-duel-line { display: flex; align-items: flex-start; gap: 7px; margin: 0; font-size: 12.5px;
+  line-height: 1.45; color: color-mix(in srgb, var(--accent2) 92%, var(--text)); }
+.dash-duel-line i { flex: 0 0 auto; margin-top: 1px; font-size: 14px; color: var(--accent); }
+.dash-duel-line.is-tie { color: color-mix(in srgb, var(--text) 80%, transparent); }
+.dash-duel-line.is-tie i { color: var(--muted); }
+.dash-duel-bar { display: flex; height: 7px; border-radius: 999px; overflow: hidden;
+  background: color-mix(in srgb, var(--text) 10%, transparent); }
+.dash-duel-fill { display: block; height: 100%; }
+.dash-duel-fill--a { background: color-mix(in srgb, var(--text) 40%, transparent); }
+.dash-duel-fill--tie { background: color-mix(in srgb, var(--text) 16%, transparent); }
+.dash-duel-fill--b { background: var(--accent2); }
+.dash-duel-legend { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); }
+
+.dash-empty { display: flex; align-items: center; gap: 8px; margin: 26px 0 0; padding: 16px 18px;
+  border-radius: 14px; font-size: 13px; line-height: 1.5;
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--text) 18%, transparent); }
+.dash-empty i { font-size: 14px; color: var(--accent); }
+.dash-spin { animation: dash-spin 1s linear infinite; }
+@keyframes dash-spin { to { transform: rotate(360deg); } }
+.dash-empty-block { display: grid; gap: 12px; justify-items: start; margin-top: 26px; padding: clamp(20px, 3vw, 34px);
+  border-radius: 20px; border: 1px dashed color-mix(in srgb, var(--text) 20%, transparent);
+  background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.dash-empty-block h2 { margin: 0; font-size: clamp(19px, 2.2vw, 24px); font-weight: 600; letter-spacing: -.02em; }
+.dash-empty-block p { margin: 0; max-width: 54ch; font-size: 13.5px; line-height: 1.55;
+  color: color-mix(in srgb, var(--text) 70%, transparent); }
+
+.dash-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  padding: 22px clamp(18px, 4vw, 48px); border-top: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  font-size: 12px; color: var(--muted); }
+.dash-foot a { color: color-mix(in srgb, var(--text) 80%, transparent); text-decoration: none; }
+.dash-foot a:hover { color: var(--accent2); }
+/* Same duo of ways out as the calculator footer: the other workspace, then home. */
+.foot-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.foot-links a { white-space: nowrap; }
+
+/* RISKY COUNTER OPENED AS A FILTER */
+#dash-scenarios { scroll-margin-top: 84px; }
+.dash-filter { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: fit-content;
+  margin: 10px 0 4px; padding: 7px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--alert) 44%, transparent); }
+.dash-filter > i { font-size: 13px; color: var(--alert); }
+.dash-filter > span { font-family: var(--font-label); font-size: 9.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: color-mix(in srgb, var(--text) 82%, transparent); white-space: nowrap; }
+.dash-filter-avg { display: inline-flex; align-items: baseline; gap: 6px; padding-left: 8px;
+  border-left: 1px solid color-mix(in srgb, var(--alert) 38%, transparent); cursor: help; }
+.dash-filter-avg > span { color: color-mix(in srgb, var(--text) 54%, transparent); }
+.dash-filter-avg b { font-size: 11px;
+  font-weight: 600; letter-spacing: 0; text-transform: none; white-space: nowrap;
+  color: color-mix(in srgb, var(--alert) 88%, var(--text)); }
+/* Same chip, opposite reading: what is left on the table today. */
+.dash-filter-gain { display: inline-flex; align-items: baseline; gap: 6px; padding-left: 8px;
+  border-left: 1px solid color-mix(in srgb, var(--alert) 38%, transparent); cursor: help; }
+.dash-filter-gain > span { color: color-mix(in srgb, var(--text) 54%, transparent); }
+.dash-filter-gain b { font-size: 11px; font-weight: 600; letter-spacing: 0;
+  text-transform: none; white-space: nowrap; color: var(--good); }
+.dash-filter-x { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--text) 20%, transparent); background: transparent;
+  color: color-mix(in srgb, var(--text) 78%, transparent); font-family: var(--font-label); font-size: 9px;
+  letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; cursor: pointer;
+  transition: border-color .2s ease-out, color .2s ease-out, background .2s ease-out; }
+.dash-filter-x i { font-size: 12px; }
+.dash-filter-x:hover { color: var(--bg); background: var(--alert); border-color: var(--alert); }
+.dash-filter-x:focus-visible { outline: 2px solid color-mix(in srgb, var(--alert) 70%, transparent);
+  outline-offset: 2px; }
+/* The card that just came back green: one click and it is in view. */
+.dash-filter-fixed { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 3px 8px;
+  border-radius: 999px; border: 1px solid color-mix(in srgb, var(--good) 50%, transparent);
+  background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good);
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .08em; text-transform: uppercase;
+  white-space: nowrap; cursor: pointer;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out; }
+.dash-filter-fixed i { font-size: 12px; }
+.dash-filter-fixed:hover { background: var(--good); border-color: var(--good); color: var(--bg); }
+.dash-filter-fixed:focus-visible { outline: 2px solid color-mix(in srgb, var(--good) 70%, transparent);
+  outline-offset: 2px; }
+/* Repartir d'un suivi propre : les dates d'envoi s'effacent d'un coup. */
+.dash-mail-reset { display: inline-flex; align-items: center; gap: 5px; margin-left: auto;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-mail-reset i { font-size: 12px; }
+.dash-mail-reset-count { display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+  font-size: 9px; letter-spacing: 0;
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+  background: color-mix(in srgb, var(--text) 10%, transparent); }
+.dash-mail-reset:hover { color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 48%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-mail-reset:hover .dash-mail-reset-count { color: var(--alert);
+  background: color-mix(in srgb, var(--alert) 16%, transparent); }
+.dash-mail-reset:focus-visible { outline: 2px solid color-mix(in srgb, var(--text) 40%, transparent);
+  outline-offset: 2px; }
+/* EFFACER LES TRACES D'IMPORT — la négociation est finie, les fiches repartent
+   sans badge. Même rangée que le filtre « Adresses importées », dans sa couleur. */
+.dash-import-clear { display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent2) 82%, var(--text));
+  background: color-mix(in srgb, var(--accent2) 7%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--accent2) 46%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-import-clear i { font-size: 12px; }
+.dash-import-clear-count { display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+  font-size: 9px; letter-spacing: 0;
+  color: var(--bg); background: color-mix(in srgb, var(--accent2) 82%, transparent); }
+.dash-import-clear:hover { color: var(--accent2);
+  border-color: var(--accent2);
+  background: color-mix(in srgb, var(--accent2) 16%, transparent); }
+.dash-import-clear:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent2) 60%, transparent); outline-offset: 2px; }
+/* LE JOURNAL DES RÉIMPORTS — à télécharger avant d'effacer les traces. */
+.dash-import-log { display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-import-log i { font-size: 12px; }
+.dash-import-log-count { display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+  font-size: 9px; letter-spacing: 0;
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+  background: color-mix(in srgb, var(--text) 10%, transparent); }
+.dash-import-log:hover:not(:disabled) { color: var(--accent2);
+  border-color: color-mix(in srgb, var(--accent2) 48%, transparent);
+  background: color-mix(in srgb, var(--accent2) 12%, transparent); }
+.dash-import-log:disabled { opacity: .45; cursor: not-allowed; }
+.dash-import-log.is-done { color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 48%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-import-log.is-fail { color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 48%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-import-log:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent2) 60%, transparent); outline-offset: 2px; }
+/* VIDER LE JOURNAL — l'annexe est archivée, la feuille repart sans elle. */
+.dash-import-log-clear { display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+  background: transparent;
+  border: 1px dashed color-mix(in srgb, var(--text) 30%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-import-log-clear i { font-size: 12px; }
+.dash-import-log-clear:hover { color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 55%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-import-log-clear:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--alert) 55%, transparent); outline-offset: 2px; }
+/* LE GARDE-FOU EN DEUX TEMPS : le premier clic arme, le second efface.
+   La confirmation prend la place du bouton, avec sa question en clair et une
+   sortie immédiate — l'annexe ne part jamais sur un clic distrait. */
+.dash-import-guard { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding: 3px 4px 3px 9px; border-radius: 999px;
+  background: color-mix(in srgb, var(--alert) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--alert) 48%, transparent); }
+.dash-import-guard-ask { display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .04em;
+  color: var(--alert); white-space: nowrap; }
+.dash-import-guard-ask i { font-size: 11px; }
+.dash-import-guard-yes { display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--bg); background: var(--alert);
+  border: 1px solid var(--alert);
+  transition: background .18s ease, transform .18s ease; }
+.dash-import-guard-yes i { font-size: 11px; }
+.dash-import-guard-yes:hover { background: color-mix(in srgb, var(--alert) 86%, var(--text));
+  transform: translateY(-1px); }
+.dash-import-guard-no { display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px 8px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 66%, transparent);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--text) 24%, transparent);
+  transition: color .18s ease, border-color .18s ease; }
+.dash-import-guard-no i { font-size: 11px; }
+.dash-import-guard-no:hover { color: var(--text);
+  border-color: color-mix(in srgb, var(--text) 50%, transparent); }
+.dash-import-guard-yes:focus-visible { outline: 2px solid color-mix(in srgb, var(--alert) 60%, transparent);
+  outline-offset: 2px; }
+.dash-import-guard-no:focus-visible { outline: 2px solid color-mix(in srgb, var(--text) 40%, transparent);
+  outline-offset: 2px; }
+.dash-import-log-wiped { display: inline-flex; align-items: center; gap: 5px; margin: 0;
+  padding: 4px 9px; border-radius: 999px; max-width: min(520px, 100%);
+  font-family: var(--font-label); font-size: 8.5px; line-height: 1.4; letter-spacing: .04em;
+  color: var(--good);
+  background: color-mix(in srgb, var(--good) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--good) 40%, transparent); }
+.dash-import-log-wiped i { flex: 0 0 auto; font-size: 12px; }
+/* L'archive des contacts déjà servis, à côté du nettoyage des dates. */
+.dash-mail-export { display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-mail-export i { font-size: 12px; }
+.dash-mail-export:hover { color: var(--accent2);
+  border-color: color-mix(in srgb, var(--accent2) 48%, transparent);
+  background: color-mix(in srgb, var(--accent2) 12%, transparent); }
+.dash-mail-export.is-done { color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 48%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-mail-export.is-fail { color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 48%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-mail-export:focus-visible { outline: 2px solid color-mix(in srgb, var(--text) 40%, transparent);
+  outline-offset: 2px; }
+
+/* Les outils de la liste, groupés à droite du titre */
+.dash-mail-tools { display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  margin-left: auto; }
+.dash-mail-tools .dash-mail-reset { margin-left: 0; }
+
+/* FILTRE « À RELANCER » — ne garder que les fournisseurs qui attendent */
+.dash-relance-toggle { display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent) 88%, var(--text));
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-relance-toggle i { font-size: 12px; }
+.dash-relance-toggle-count { display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; font-size: 9px;
+  letter-spacing: 0; color: color-mix(in srgb, var(--accent) 90%, var(--text));
+  background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.dash-relance-toggle:hover { color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.dash-relance-toggle.is-on { color: var(--bg); background: var(--accent);
+  border-color: var(--accent); font-weight: 600; }
+.dash-relance-toggle.is-on i,
+.dash-relance-toggle.is-on .dash-relance-toggle-count { color: var(--bg); }
+.dash-relance-toggle.is-on .dash-relance-toggle-count {
+  background: color-mix(in srgb, var(--bg) 26%, transparent); }
+.dash-relance-toggle:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent);
+  outline-offset: 2px; }
+
+/* La liste des relances prête à coller, à côté du filtre */
+.dash-relance-copy { display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-relance-copy i { font-size: 12px; }
+.dash-relance-copy:hover { color: var(--accent2);
+  border-color: color-mix(in srgb, var(--accent2) 48%, transparent);
+  background: color-mix(in srgb, var(--accent2) 12%, transparent); }
+.dash-relance-copy.is-done { color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 48%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-relance-copy.is-fail { color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 48%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-relance-copy:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent);
+  outline-offset: 2px; }
+
+/* Le même bouton en fichier : la liste quitte le navigateur */
+.dash-relance-save { display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-relance-save i { font-size: 12px; }
+.dash-relance-save:hover { color: var(--accent2);
+  border-color: color-mix(in srgb, var(--accent2) 48%, transparent);
+  background: color-mix(in srgb, var(--accent2) 12%, transparent); }
+.dash-relance-save.is-done { color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 48%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-relance-save.is-fail { color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 48%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-relance-save:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 72%, transparent);
+  outline-offset: 2px; }
+
+/* La même pastille de filtre, en ambre : rien de cassé, juste un envoi à faire */
+.dash-filter.is-relance { background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 44%, transparent); }
+.dash-filter.is-relance > i { color: var(--accent); }
+.dash-filter.is-relance .dash-filter-x:hover { background: var(--accent);
+  border-color: var(--accent); }
+.dash-filter.is-relance .dash-filter-x:focus-visible {
+  outline-color: color-mix(in srgb, var(--accent) 70%, transparent); }
+
+/* FILTRE « ADRESSES IMPORTÉES » — au ton du second accent, comme les badges */
+.dash-relance-toggle.is-imported { color: color-mix(in srgb, var(--accent2) 88%, var(--text));
+  background: color-mix(in srgb, var(--accent2) 8%, transparent);
+  border-color: color-mix(in srgb, var(--accent2) 34%, transparent); }
+.dash-relance-toggle.is-imported:hover { color: color-mix(in srgb, var(--accent2) 92%, var(--text));
+  border-color: color-mix(in srgb, var(--accent2) 62%, transparent);
+  background: color-mix(in srgb, var(--accent2) 14%, transparent); }
+.dash-relance-toggle.is-imported .dash-relance-toggle-count {
+  color: color-mix(in srgb, var(--accent2) 90%, var(--text));
+  background: color-mix(in srgb, var(--accent2) 16%, transparent); }
+.dash-relance-toggle.is-imported.is-on { color: var(--bg); background: var(--accent2);
+  border-color: var(--accent2); }
+.dash-relance-toggle.is-imported.is-on i,
+.dash-relance-toggle.is-imported.is-on .dash-relance-toggle-count { color: var(--bg); }
+.dash-relance-toggle.is-imported.is-on .dash-relance-toggle-count {
+  background: color-mix(in srgb, var(--bg) 26%, transparent); }
+.dash-filter.is-imported { background: color-mix(in srgb, var(--accent2) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent2) 44%, transparent); }
+.dash-filter.is-imported > i { color: color-mix(in srgb, var(--accent2) 88%, var(--text)); }
+.dash-filter.is-imported .dash-filter-x:hover { background: var(--accent2);
+  border-color: var(--accent2); }
+.dash-filter.is-imported .dash-filter-x:focus-visible {
+  outline-color: color-mix(in srgb, var(--accent2) 70%, transparent); }
+
+/* FILTRE « FICHES SANS TRACE D'IMPORT » — le complément des adresses importées.
+   Ton neutre volontairement : ce n'est ni une alerte ni un envoi à faire, juste
+   l'autre moitié du tri par provenance. */
+.dash-relance-toggle.is-untraced { color: color-mix(in srgb, var(--text) 76%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border-color: color-mix(in srgb, var(--text) 22%, transparent); }
+.dash-relance-toggle.is-untraced:hover { color: var(--text);
+  border-color: color-mix(in srgb, var(--text) 44%, transparent);
+  background: color-mix(in srgb, var(--text) 10%, transparent); }
+.dash-relance-toggle.is-untraced .dash-relance-toggle-count {
+  color: color-mix(in srgb, var(--text) 72%, transparent);
+  background: color-mix(in srgb, var(--text) 12%, transparent); }
+.dash-relance-toggle.is-untraced.is-on { color: var(--bg); background: var(--text);
+  border-color: var(--text); }
+.dash-relance-toggle.is-untraced.is-on i,
+.dash-relance-toggle.is-untraced.is-on .dash-relance-toggle-count { color: var(--bg); }
+.dash-relance-toggle.is-untraced.is-on .dash-relance-toggle-count {
+  background: color-mix(in srgb, var(--bg) 26%, transparent); }
+.dash-filter.is-untraced { background: color-mix(in srgb, var(--text) 8%, transparent);
+  border-color: color-mix(in srgb, var(--text) 30%, transparent); }
+.dash-filter.is-untraced > i { color: color-mix(in srgb, var(--text) 70%, transparent); }
+.dash-filter.is-untraced .dash-filter-x:hover { background: var(--text);
+  border-color: var(--text); }
+.dash-filter.is-untraced .dash-filter-x:focus-visible {
+  outline-color: color-mix(in srgb, var(--text) 60%, transparent); }
+
+/* FILTRE « À BAPTISER » — les fiches importées qui attendent encore leur nom de
+   fournisseur. L'ambre du premier accent, la même que la pastille du burger. */
+.dash-relance-toggle.is-unnamed {
+  color: color-mix(in srgb, var(--accent) 90%, var(--text));
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent); }
+.dash-relance-toggle.is-unnamed:hover {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.dash-relance-toggle.is-unnamed .dash-relance-toggle-count {
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.dash-relance-toggle.is-unnamed.is-on { color: var(--bg); background: var(--accent);
+  border-color: var(--accent); }
+.dash-relance-toggle.is-unnamed.is-on i,
+.dash-relance-toggle.is-unnamed.is-on .dash-relance-toggle-count { color: var(--bg); }
+.dash-relance-toggle.is-unnamed.is-on .dash-relance-toggle-count {
+  background: color-mix(in srgb, var(--bg) 26%, transparent); }
+.dash-filter.is-unnamed { background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 46%, transparent); }
+.dash-filter.is-unnamed > i { color: var(--accent); }
+.dash-filter.is-unnamed .dash-filter-x:hover { background: var(--accent);
+  border-color: var(--accent); }
+.dash-filter.is-unnamed .dash-filter-x:focus-visible {
+  outline-color: color-mix(in srgb, var(--accent) 70%, transparent); }
+/* Le raccourci de la bannière : ouvrir la fiche et son champ de nom. */
+.dash-filter-baptise {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 3px 8px;
+  border-radius: 999px; white-space: nowrap; text-decoration: none; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--accent) 56%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent);
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out; }
+.dash-filter-baptise i { font-size: 12px; }
+.dash-filter-baptise:hover { background: var(--accent); border-color: var(--accent);
+  color: var(--bg); }
+.dash-filter-baptise:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px; }
+/* LE TRI DES FICHES À BAPTISER — l'ancienneté met devant ce qui traîne.
+   Éteint, il annonce l'ordre inverse ; allumé, il prend l'ambre de la liste. */
+.dash-filter-sort {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 3px 8px;
+  border-radius: 999px; white-space: nowrap; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--text) 28%, transparent);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  color: color-mix(in srgb, var(--text) 74%, transparent);
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .07em;
+  text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out; }
+.dash-filter-sort i { font-size: 12px; }
+.dash-filter-sort:hover {
+  color: var(--text); border-color: color-mix(in srgb, var(--text) 52%, transparent);
+  background: color-mix(in srgb, var(--text) 12%, transparent); }
+.dash-filter-sort.is-on {
+  color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+.dash-filter-sort.is-on i { color: var(--bg); }
+.dash-filter-sort:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px; }
+/* Le fichier des fiches à baptiser : même rang que le bouton qui en ouvre une,
+   mais en retrait — exporter ne fait pas avancer la saisie, il la déplace. */
+.dash-filter-csv {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 3px 8px;
+  border-radius: 999px; white-space: nowrap; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out; }
+.dash-filter-csv i { font-size: 12px; }
+.dash-filter-csv:hover {
+  border-color: color-mix(in srgb, var(--accent) 56%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+.dash-filter-csv.is-done {
+  background: color-mix(in srgb, var(--good) 18%, transparent);
+  border-color: color-mix(in srgb, var(--good) 50%, transparent); color: var(--good); }
+.dash-filter-csv.is-fail {
+  background: color-mix(in srgb, var(--alert) 18%, transparent);
+  border-color: color-mix(in srgb, var(--alert) 50%, transparent); color: var(--alert); }
+.dash-filter-csv:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px; }
+/* LE FICHIER REVIENT REMPLI — même rang que l'export, mais c'est lui qui fait
+   avancer la saisie : il prend donc la couleur pleine de l'ambre. */
+.dash-filter-reimport {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 3px 8px;
+  border-radius: 999px; white-space: nowrap; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--accent) 52%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out; }
+.dash-filter-reimport i { font-size: 12px; }
+.dash-filter-reimport:hover {
+  background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.dash-filter-reimport:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px; }
+/* Le champ de fichier reste dans le flux mais invisible : le bouton le pilote. */
+.dash-csv-input {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* CE QUE LE RÉIMPORT A DONNÉ, DANS LA BANNIÈRE */
+.dash-filter-note {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px;
+  border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 24%, transparent);
+  color: color-mix(in srgb, var(--text) 78%, transparent); }
+.dash-filter-note i { font-size: 11px; }
+.dash-filter-note.is-ok {
+  color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 46%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-filter-note.is-fail {
+  color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 46%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+/* LE COMPTEUR DU JOUR, DANS LA BANNIÈRE
+   En vert et sans action : il ne filtre rien, il dit juste ce qui a avancé
+   depuis ce matin. Il retombe à zéro de lui-même au changement de jour. */
+.dash-filter-baptised {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px;
+  border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--good);
+  border: 1px solid color-mix(in srgb, var(--good) 46%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-filter-baptised i { font-size: 11px; }
+/* LE RETARD CUMULÉ, À CÔTÉ DU FILTRE
+   La somme des jours d'attente de toutes les fiches anonymes : elle baisse à
+   chaque nom saisi et remonte quand le fichier revient sans nom. */
+.dash-filter-wait {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 3px 8px;
+  border-radius: 999px; white-space: nowrap; cursor: help;
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  border: 1px solid color-mix(in srgb, var(--accent) 44%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.dash-filter-wait i { font-size: 12px; }
+.dash-filter-wait b { font-size: 10.5px; font-weight: 600; letter-spacing: 0; }
+
+/* LA LISTE DES FICHES BAPTISÉES AUJOURD'HUI
+   Sous la bannière du filtre : un nom par pastille, et une croix pour effacer
+   une saisie faite par erreur. La fiche revient alors dans la liste à baptiser,
+   sans quitter la page. */
+.dash-named {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  width: fit-content; max-width: 100%;
+  margin: 0 0 4px; padding: 6px 10px; border-radius: 14px;
+  background: color-mix(in srgb, var(--good) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--good) 34%, transparent); }
+.dash-named-lab { display: inline-flex; align-items: center; gap: 5px; margin: 0;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .08em;
+  text-transform: uppercase; white-space: nowrap; color: var(--good); }
+.dash-named-lab i { font-size: 12px; }
+.dash-named-list { display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  margin: 0; padding: 0; list-style: none; }
+.dash-named-item { display: inline-flex; align-items: center; gap: 2px;
+  padding: 2px 3px 2px 9px; border-radius: 999px; max-width: 100%;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--good) 28%, transparent); }
+.dash-named-name { font-size: 10.5px;
+  color: color-mix(in srgb, var(--text) 88%, transparent);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+/* La fiche reste joignable après le baptême : ce lien l'ouvre dans le
+   calculateur, juste à côté de la croix qui efface le nom. */
+.dash-named-go { display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; flex: 0 0 auto; border-radius: 999px;
+  color: color-mix(in srgb, var(--good) 78%, transparent);
+  text-decoration: none;
+  transition: background .18s ease-out, color .18s ease-out; }
+.dash-named-go i { font-size: 12px; }
+.dash-named-go:hover { background: var(--good); color: var(--bg); }
+.dash-named-go:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--good) 70%, transparent); outline-offset: 1px; }
+.dash-named-x { display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; flex: 0 0 auto; padding: 0; border-radius: 999px;
+  border: none; background: transparent; cursor: pointer;
+  color: color-mix(in srgb, var(--text) 46%, transparent);
+  transition: background .18s ease-out, color .18s ease-out; }
+.dash-named-x i { font-size: 12px; }
+.dash-named-x:hover { background: var(--alert); color: var(--bg); }
+.dash-named-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--alert) 70%, transparent); outline-offset: 1px; }
+.dash-named-note { display: inline-flex; align-items: center; gap: 4px; margin: 0;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .06em;
+  text-transform: uppercase; white-space: nowrap;
+  color: color-mix(in srgb, var(--text) 62%, transparent); }
+.dash-named-note i { font-size: 11px; }
+
+/* FICHE ENCORE ANONYME — SON ÂGE ET L'ADRESSE DU FOURNISSEUR */
+.dash-card-anon {
+  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  align-self: flex-start; max-width: 100%; margin-top: 1px; }
+.dash-card-anon-age {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px 2px 6px;
+  border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .07em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent); }
+.dash-card-anon-age i { font-size: 10px; }
+/* Trois jours : ça commence à traîner. Dix jours : c'est un oubli. */
+.dash-card-anon-age.is-aging {
+  color: color-mix(in srgb, var(--accent) 88%, var(--text));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 38%, transparent); }
+.dash-card-anon-age.is-cold {
+  color: color-mix(in srgb, var(--alert) 88%, var(--text));
+  background: color-mix(in srgb, var(--alert) 12%, transparent);
+  border-color: color-mix(in srgb, var(--alert) 44%, transparent); }
+.dash-card-anon-mail {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px 2px 7px;
+  border-radius: 999px; white-space: nowrap; cursor: pointer;
+  font-family: var(--font-label); font-size: 8px; letter-spacing: .07em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 66%, transparent);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.dash-card-anon-mail i { font-size: 10px; }
+.dash-card-anon-mail:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 52%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.dash-card-anon-mail.is-done {
+  color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 46%, transparent);
+  background: color-mix(in srgb, var(--good) 12%, transparent); }
+.dash-card-anon-mail.is-fail {
+  color: var(--alert);
+  border-color: color-mix(in srgb, var(--alert) 46%, transparent);
+  background: color-mix(in srgb, var(--alert) 12%, transparent); }
+.dash-card-anon-mail:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px; }
+/* OUVRIR LA FICHE DEPUIS LA CARTE — le nom se saisit sans repasser par la bannière */
+.dash-card-baptise {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  align-self: flex-start; width: fit-content; max-width: 100%;
+  margin-top: 3px; padding: 5px 12px; border-radius: 999px;
+  white-space: nowrap; text-decoration: none; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--accent) 56%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .09em;
+  text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out,
+    transform .2s ease-out; }
+.dash-card-baptise i { font-size: 12px; }
+.dash-card-baptise:hover {
+  background: var(--accent); border-color: var(--accent); color: var(--bg);
+  transform: translateY(-1px); }
+.dash-card-baptise:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 2px; }
+
+/* CORRECTED CARD — SHARE THE ADVISED PRICE */
+.dash-share { display: grid; gap: 8px; margin-top: 6px; padding: 10px 11px; border-radius: 12px;
+  background: color-mix(in srgb, var(--good) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--good) 34%, transparent); }
+.dash-share-head { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.dash-share-lab { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+  font-family: var(--font-label); font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 62%, transparent); cursor: help; }
+.dash-share-lab i { font-size: 11px; color: var(--good); }
+.dash-share-price { font-size: 17px; font-weight: 600; letter-spacing: -.02em; white-space: nowrap;
+  color: var(--good); }
+.dash-share-delta { font-family: var(--font-label); font-size: 8.5px; letter-spacing: .04em;
+  white-space: nowrap; color: color-mix(in srgb, var(--text) 50%, transparent); }
+.dash-share-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 12px; border-radius: 999px; white-space: nowrap; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--good) 48%, transparent);
+  background: color-mix(in srgb, var(--good) 16%, transparent); color: var(--good);
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+  transition: background .2s ease-out, color .2s ease-out, border-color .2s ease-out; }
+.dash-share-btn i { font-size: 13px; }
+.dash-share-btn:hover { background: var(--good); border-color: var(--good); color: var(--bg); }
+.dash-share-btn.is-done { background: var(--good); border-color: var(--good); color: var(--bg); }
+.dash-share-btn:focus-visible { outline: 2px solid color-mix(in srgb, var(--good) 70%, transparent);
+  outline-offset: 2px; }
+.dash-share-fallback { display: grid; gap: 4px; }
+.dash-share-fallback span { font-family: var(--font-label); font-size: 8.5px; letter-spacing: .04em;
+  line-height: 1.4; color: color-mix(in srgb, var(--text) 62%, transparent); }
+.dash-share-fallback input { width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+  background: color-mix(in srgb, var(--bg) 70%, transparent); color: var(--text);
+  font-size: 10.5px; }
+
+@media (max-width: 960px) {
+  .dash-hero { grid-template-columns: 1fr; }
+  .dash-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .dash-readout-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dash-kpi b { font-size: 19px; }
+}
+@media print {
+  .dash-nav, .dash-foot { display: none !important; }
+}
+
+.dash-empty-block .dash-empty-preview { display: grid; gap: 12px; width: 100%; max-width: 540px;
+  padding: 14px 16px 13px; border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  background: color-mix(in srgb, var(--bg) 55%, transparent); }
+.dash-empty-preview-head { display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap; }
+.dash-empty-preview-lab { display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-label); font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); }
+.dash-empty-preview-lab i { font-size: 12px; color: var(--accent2); }
+.dash-empty-preview-tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
+  border-radius: 999px; white-space: nowrap; text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent2); font-family: var(--font-label); font-size: 8.5px; letter-spacing: .1em; }
+.dash-empty-preview-tag i { font-size: 11px; }
+.dash-empty-preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 16px; }
+.dash-empty-preview-grid span { display: block; margin-bottom: 3px; font-family: var(--font-label);
+  font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.dash-empty-preview-grid b { font-size: 17px; font-weight: 600; letter-spacing: -.02em;
+  white-space: nowrap; }
+.dash-empty-preview-grid b.is-pos { color: var(--accent2); }
+.dash-empty-preview-grid b.is-neg { color: var(--alert); }
+.dash-empty-block .dash-empty-preview-note { max-width: 46ch; font-size: 11.5px; line-height: 1.5;
+  color: color-mix(in srgb, var(--text) 55%, transparent); }
+.dash-empty-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 2px;
+  color: color-mix(in srgb, var(--text) 62%, transparent); text-decoration: none; white-space: nowrap;
+  cursor: pointer; font-family: var(--font-label); font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; transition: color .2s ease-out, gap .2s ease-out; }
+.dash-empty-link i { font-size: 12px; }
+.dash-empty-link:hover { color: var(--accent2); gap: 9px; }
+@media (max-width: 480px) { .dash-empty-preview-grid { grid-template-columns: 1fr 1fr; } }
+
+/* LIGHT SKIN — FOR LONG DASHBOARD SESSIONS */
+.dash-page[data-dash-skin="light"] {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --text: #16202b;
+  --muted: #5b6a79;
+  --accent: #a45f06;
+  --accent2: #8a5009;
+  --alert: #c23b30;
+  --good: #1f9d63;
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, .95) 0%, transparent 62%),
+    var(--bg);
+}
+.dash-page[data-dash-skin="light"] .dash-nav {
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--text) 12%, transparent);
+}
+.dash-page[data-dash-skin="light"] .dash-hero::before {
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 13%, transparent) 0%, transparent 68%);
+}
+/* Daylight surfaces: white cards on a pale page, with paper-like shadows
+   instead of the heavy black ones the dark skin needs. */
+.dash-page[data-dash-skin="light"] .dash-readout,
+.dash-page[data-dash-skin="light"] .dc,
+.dash-page[data-dash-skin="light"] .dash-duel,
+.dash-page[data-dash-skin="light"] .dash-empty-block {
+  box-shadow: 0 26px 60px -46px rgba(16, 32, 48, .5);
+}
+.dash-page[data-dash-skin="light"] .dash-readout { background: #fff; backdrop-filter: none; }
+.dash-page[data-dash-skin="light"] .dash-card {
+  box-shadow: 0 18px 44px -40px rgba(16, 32, 48, .5);
+}
+.dash-page[data-dash-skin="light"] .dash-card:hover {
+  border-color: color-mix(in srgb, var(--text) 26%, transparent);
+}
+.dash-page[data-dash-skin="light"] .dash-bar-profit {
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 34%, transparent);
+}
+.dash-page[data-dash-skin="light"] .dc-tip {
+  background: color-mix(in srgb, #fff 97%, transparent);
+  box-shadow: 0 22px 46px -34px rgba(16, 32, 48, .55);
+}
+.dash-page[data-dash-skin="light"] .dc-dot { box-shadow: 0 0 0 3px rgba(255, 255, 255, .9); }
+.dash-page[data-dash-skin="light"] .dc-dot.is-active {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+/* The greens used for tally, chips and buttons were tuned for the dark skin. */
+.dash-page[data-dash-skin="light"] .dash-tally-item.is-good,
+.dash-page[data-dash-skin="light"] .dash-verdict.is-good { --v: var(--good); }

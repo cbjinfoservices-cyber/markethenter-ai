@@ -1,0 +1,140 @@
+/* ===================================================================
+   « LECTURE CONFORT »
+   Un seul interrupteur, dans les préférences d'affichage. Il agrandit la
+   citation et les petits libellés mono — rien d'autre. Les titres, les
+   chiffres, les images et la mise en page restent exactement les mêmes.
+   =================================================================== */
+
+/* 1. LA CITATION — le seul vrai bloc de texte long de la page d'accueil. */
+.home-skin[data-comfort="on"] .pull {
+  padding-top: 16px;
+  padding-bottom: 17px;
+  border-left-width: 3px;
+}
+.home-skin[data-comfort="on"] .pull p {
+  font-size: 16px;
+  line-height: 1.8;
+  letter-spacing: .002em;
+}
+
+/* 2. LES PETITS LIBELLÉS — surtitre de section, libellés de champs,
+   en-têtes de colonnes, légendes de chiffres et pied de page. Chacun
+   monte d'environ deux pixels : assez pour se lire d'un œil fatigué,
+   pas assez pour déplacer la mise en page. */
+.home-skin[data-comfort="on"] :is(
+  .stamp,
+  .calc-inputs-title,
+  .calc-legend-floor-lab,
+  .foot-grid h4,
+  .nav-mobile-lab,
+  .prefs-lab
+) { font-size: 12.5px; }
+
+.home-skin[data-comfort="on"] :is(
+  .calc-lab,
+  .calc-res-title,
+  .calc-res-tile span,
+  .calc-res-row dt,
+  .calc-banner-lab,
+  .calc-verdict-lab,
+  .calc-res-hint,
+  .ph-stats
+) { font-size: 11px; }
+
+.home-skin[data-comfort="on"] :is(
+  .calc-res-tile em,
+  .ph-month,
+  .ph-price,
+  .calc-foot-note,
+  .calc-legend-floor-hint
+) { font-size: 10.5px; }
+
+.home-skin[data-comfort="on"] :is(.legal) { font-size: 14.5px; }
+.home-skin[data-comfort="on"] .foot-links a { font-size: 12px; }
+
+/* Le libellé du burger et les surtitres de sections gardent leur
+   interlignage serré : on agrandit la lettre, pas le bloc. */
+.home-skin[data-comfort="on"] :is(.stamp, .calc-banner-lab, .calc-verdict-lab) { line-height: 1.3; }
+
+/* 3. LES PAGES DE TRAVAIL — calculateur, tableau de bord, page Modules.
+   Mêmes libellés mono et mêmes notes que l'accueil : ils suivent le même
+   interrupteur. Les titres, les chiffres et la mise en page ne bougent pas. */
+.calc-page[data-comfort="on"] :is(
+  .calc-inputs-title,
+  .calc-res-title,
+  .calc-lab,
+  .calc-banner-lab,
+  .calc-verdict-lab,
+  .calc-legend-floor-lab,
+  .calc-hero-chips li,
+  .stamp
+) { font-size: 12.5px; }
+
+.calc-page[data-comfort="on"] :is(
+  .calc-res-tile span,
+  .calc-res-row dt,
+  .calc-res-hint,
+  .calc-inputs-hint,
+  .calc-legend-floor-hint,
+  .calc-foot-note,
+  .calc-pit-num,
+  .ph-stats,
+  .ph-month,
+  .ph-price
+) { font-size: 11px; }
+
+.calc-page[data-comfort="on"] :is(
+  .calc-hero-sub,
+  .calc-pit p,
+  .calc-read-card p,
+  .calc-read-head p,
+  .calc-next-copy em,
+  .calc-legend-copy p
+) { font-size: 14px; line-height: 1.62; }
+
+.dash-page[data-comfort="on"] :is(
+  .dash-readout-lab,
+  .dash-readout-grid span,
+  .dash-readout-note,
+  .dash-kpi span,
+  .dash-tally-lab,
+  .dash-tally-floor,
+  .dash-tally-sync,
+  .dash-card-cap,
+  .dash-card-green em,
+  .dash-card-pick-lab,
+  .dash-card-mail-when,
+  .stamp
+) { font-size: 10.5px; }
+
+.dash-page[data-comfort="on"] :is(
+  .dash-sub,
+  .dash-section-head p,
+  .dash-card p,
+  .dash-card-none,
+  .dash-empty-preview-note,
+  .src-card p
+) { font-size: 13.5px; line-height: 1.6; }
+
+/* Page Modules : ses libellés d'aperçu et ses numéros de module. */
+.dash-page[data-comfort="on"] :is(
+  .mod-idx,
+  .mod-preview-lab,
+  .mod-tag,
+  .mod-floor-head > span,
+  .mod-floor-sync,
+  .mod-chips li
+) { font-size: 9.5px; }
+
+.dash-page[data-comfort="on"] :is(
+  .mod-card p,
+  .mod-step p,
+  .mod-floor-hint,
+  .mod-cta p
+) { font-size: 13.5px; line-height: 1.58; }
+
+.dash-page[data-comfort="on"] .mod-preview-rows > div { font-size: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .home-skin[data-comfort="on"] .pull { transition: none; }
+}

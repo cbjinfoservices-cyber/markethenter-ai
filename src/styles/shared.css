@@ -1,0 +1,254 @@
+:root {
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 24px;
+  --ui-radius-field: 10px;
+  --ui-radius-card: 18px;
+  --ui-radius-panel: 22px;
+  --ui-radius-pill: 999px;
+  --ui-page-title: clamp(30px, 3.8vw, 48px);
+}
+
+@media screen {
+  html[data-skin="light"] :is(.account-page, .auth-overlay, #page-burger-panel) {
+    --bg: #f4f6f9;
+    --surface: #fff;
+    --text: #16202b;
+    --muted: #46535f;
+    --accent: #a45f06;
+    --accent2: #8a5009;
+    --alert: #c23b30;
+  }
+
+  :is(.auth-overlay, #page-burger-panel) {
+    color: var(--text);
+  }
+
+  :is(.home-skin, .dash-page, .calc-page, .account-page, .auth-overlay) {
+    --ui-border: color-mix(in srgb, var(--text) 18%, transparent);
+    --ui-card-surface: color-mix(in srgb, var(--surface) 88%, var(--bg));
+    --ui-shadow: 0 16px 40px -28px rgb(0 0 0 / 55%);
+    --ui-shadow-hover: 0 22px 48px -28px rgb(0 0 0 / 65%);
+  }
+
+  :is(
+    .home-skin[data-home-skin="light"],
+    .dash-page[data-dash-skin="light"],
+    .calc-page[data-calc-skin="light"]
+  ),
+  html[data-skin="light"] :is(.account-page, .auth-overlay) {
+    --ui-shadow: 0 12px 32px -24px rgb(22 32 43 / 20%);
+    --ui-shadow-hover: 0 20px 40px -26px rgb(22 32 43 / 28%);
+  }
+
+  :where(.home-skin, .dash-page, .calc-page, .account-page, .auth-overlay, #page-burger-panel) :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  :is(.btn, .auth-submit, .src-load, .src-save, .calc-btn) {
+    min-height: 40px;
+    justify-content: center;
+    border-radius: var(--ui-radius-pill);
+    line-height: 1.4;
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: 11px 20px;
+    white-space: normal;
+    text-align: center;
+  }
+
+  :is(.src-load, .src-save, .calc-btn) {
+    font-size: 11px;
+    letter-spacing: .06em;
+  }
+
+  :is(.btn, .auth-submit, .src-load, .src-save, .calc-btn):disabled {
+    cursor: not-allowed;
+    opacity: .55;
+    transform: none;
+  }
+
+  :is(.btn, .auth-submit, .src-load, .src-save, .calc-btn):disabled:hover {
+    box-shadow: none;
+  }
+
+  .btn:disabled:hover i {
+    transform: none;
+  }
+
+  :is(.nav-skin, .calc-skin, .dash-skin) {
+    height: 32px;
+    border-radius: var(--ui-radius-pill);
+  }
+
+  :is(
+    .field input, .field select, .field textarea,
+    .calc-field input, .auth-field input, .sup-input,
+    .src-sort select, .account-main select
+  ) {
+    min-height: 40px;
+    border-radius: var(--ui-radius-field);
+    border-color: var(--ui-border);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  :is(
+    .field input, .field select, .field textarea,
+    .calc-field input, .auth-field input, .sup-input,
+    .src-sort select, .account-main select
+  ):focus-visible {
+    border-color: var(--accent);
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  :is(.calc-lab, .auth-field > span, .sup-field > label, .sup-field-lab) {
+    font-size: 11px;
+    line-height: 1.5;
+    letter-spacing: .06em;
+  }
+
+  :is(.card, .dash-card, .src-card, .sup-card, .mod-card, .account-panel) {
+    border-radius: var(--ui-radius-card);
+    background: var(--ui-card-surface);
+  }
+
+  :is(.card, .dash-card, .mod-card, .account-panel) {
+    padding: var(--ui-space-5);
+  }
+
+  :is(.src-body, .sup-card) {
+    padding: var(--ui-space-4);
+    gap: var(--ui-space-3);
+  }
+
+  :is(.src-card, .mod-card.is-link):hover {
+    box-shadow: var(--ui-shadow-hover);
+  }
+
+  :is(.dash-readout, .sup-dialog, .auth-card) {
+    border-radius: var(--ui-radius-panel);
+    box-shadow: var(--ui-shadow);
+  }
+
+  .auth-card {
+    background: var(--ui-card-surface);
+  }
+
+  :is(.src-filters, .mod-step, .calc-read-card, .calc-pit) {
+    border-radius: var(--ui-radius-card);
+  }
+
+  :is(.dash-grid, .src-grid, .sup-grid, .mod-grid, .mod-path) {
+    gap: var(--ui-space-4);
+  }
+
+  .src-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 292px), 1fr));
+  }
+
+  .sup-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  }
+
+  :is(.dash-hero-copy h1, .calc-hero h1, .account-main h1) {
+    font-size: var(--ui-page-title);
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -.035em;
+    text-wrap: balance;
+  }
+
+  :is(.dash-sub, .calc-hero-sub) {
+    font-size: clamp(14px, 1.2vw, 16px);
+    line-height: 1.65;
+  }
+
+  :is(.src-top h3, .mod-card h3) {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  :is(.mod-card p, .mod-step p, .src-provenance, .auth-intro) {
+    font-size: 13px;
+    line-height: 1.65;
+    color: color-mix(in srgb, var(--text) 78%, transparent);
+  }
+
+  :is(.dash-chip, .mod-chips li, .calc-hero-chips li, .mod-tag) {
+    min-height: 28px;
+    font-size: 10px;
+    line-height: 1.4;
+    letter-spacing: .06em;
+  }
+
+  .src-meta a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ui-space-1);
+    min-height: 32px;
+    color: var(--accent2);
+    font-size: 11px;
+    text-underline-offset: 3px;
+  }
+
+  .src-meta a:hover {
+    text-decoration: underline;
+  }
+
+  .site-empty {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: var(--ui-space-5);
+    min-height: 100svh;
+    max-width: 760px;
+    margin: auto;
+    padding: 32px 24px;
+  }
+
+  .site-empty h1 {
+    font-size: var(--ui-page-title);
+    line-height: 1.1;
+    letter-spacing: -.035em;
+  }
+
+  .site-empty p:not(.stamp) {
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 640px) {
+    :is(.card, .dash-card, .mod-card, .account-panel) {
+      padding: var(--ui-space-4);
+    }
+
+    :is(.field input, .field select, .field textarea, .calc-field input, .auth-field input, .sup-input) {
+      font-size: 16px;
+    }
+
+    .src-actions {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(.src-card, .sup-card, .mod-card.is-link):hover,
+    .btn:hover i {
+      transform: none;
+    }
+
+    :is(.btn, .src-card, .sup-card, .mod-card, .calc-btn) {
+      transition: none;
+    }
+  }
+}

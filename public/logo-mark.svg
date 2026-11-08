@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>MarketHunter AI</title>
+  <g fill="none" stroke="#f5a63c" stroke-linecap="round">
+    <circle cx="32" cy="32" r="19" stroke-width="4"/>
+    <circle cx="32" cy="32" r="9" stroke-width="3" opacity=".6"/>
+    <path d="M32 4v12M32 48v12M4 32h12M48 32h12" stroke-width="4"/>
+  </g>
+  <circle cx="32" cy="32" r="3.5" fill="#f5a63c"/>
+</svg>

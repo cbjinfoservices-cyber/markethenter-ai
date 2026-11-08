@@ -1,0 +1,60 @@
+/* LA LIGNE « RELANCES DUES » DU MENU BURGER
+   La pastille d'en-tête s'efface sous 480 px : sur un écran étroit, c'est ce
+   rang de menu qui porte le compteur, avec la même destination. */
+.nav-mobile .nav-mobile-due {
+  display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-radius: 12px;
+  font-family: var(--font-label); font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; text-decoration: none; color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 46%, transparent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  transition: background .2s ease-out, border-color .2s ease-out;
+}
+.nav-mobile .nav-mobile-due:hover {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 68%, transparent);
+}
+.nav-mobile .nav-mobile-due i { font-size: 15px; color: var(--accent); }
+.nav-mobile-due-lab { flex: 1 1 auto; min-width: 0; }
+.nav-mobile-due-count {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0;
+  color: var(--bg); background: var(--accent);
+}
+
+/* LA PASTILLE « RELANCES DUES » DES EN-TÊTES
+   Même gabarit que la pastille des fournisseurs au-dessus du seuil, dans
+   l'ambre des relances : elle se lit sur les quatre pages de travail. */
+
+.nav-due {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px;
+  border-radius: 999px; text-decoration: none; white-space: nowrap; cursor: pointer;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 46%, transparent);
+  font-family: var(--font-label); font-size: 9.5px; letter-spacing: .07em;
+  text-transform: uppercase;
+  transition: background .2s ease-out, border-color .2s ease-out, color .2s ease-out;
+}
+.nav-due:hover {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 72%, transparent);
+}
+.nav-due i { font-size: 13px; }
+.nav-due b { font-size: 11px; font-weight: 600; }
+.nav-due-lab { font-size: 9px; letter-spacing: .07em; }
+.nav-due:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 1180px) {
+  .nav-due-lab { display: none; }
+}
+@media (max-width: 620px) {
+  .nav-due { padding: 5px 9px; }
+  .nav-due i { font-size: 12px; }
+}
+@media (max-width: 480px) {
+  .nav-due { display: none; }
+}
